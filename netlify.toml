@@ -2,7 +2,7 @@
 
 [build]
   command = "npm run build:demo"
-  publish = "dist"
+  publish = "dist/spa"
 
 [build.environment]
   VITE_DEMO_MODE = "true"
