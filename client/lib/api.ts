@@ -1,6 +1,11 @@
 // Check if we're in demo mode (static deployment without backend)
 const isDemoMode = import.meta.env.VITE_DEMO_MODE === 'true';
 
+// Debug: Log demo mode status (will be removed by tree-shaking in production)
+if (import.meta.env.DEV) {
+  console.log('Demo Mode:', isDemoMode, 'VITE_DEMO_MODE:', import.meta.env.VITE_DEMO_MODE);
+}
+
 export const API_BASE_URL = isDemoMode ? 'DEMO_MODE' : 'http://localhost:5174/api/v1';
 export const API_LEGACY_URL = isDemoMode ? 'DEMO_MODE' : 'http://localhost:5174/api';
 
