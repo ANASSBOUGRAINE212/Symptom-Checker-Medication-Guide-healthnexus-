@@ -23,10 +23,7 @@
 - [Project Structure](#project-structure)
 - [API Documentation](#api-documentation)
 - [Security](#security)
-- [Demo Mode](#demo-mode)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ---
 
