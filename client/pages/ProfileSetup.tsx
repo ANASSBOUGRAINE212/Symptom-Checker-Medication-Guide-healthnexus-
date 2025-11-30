@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { BLOOD_TYPES, COUNTRIES, GENDERS } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,7 +94,7 @@ export default function ProfileSetup() {
       if (formData.weight) profileData.weight = parseInt(formData.weight);
       if (formData.allergies) profileData.allergies = formData.allergies;
 
-      const response = await fetch(`/api/v1/user/profile`, {
+      const response = await apiFetch(`/user/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

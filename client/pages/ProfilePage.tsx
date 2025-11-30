@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { BLOOD_TYPES, COUNTRIES, GENDERS } from "@/constants";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,7 +72,7 @@ export default function ProfilePage() {
       if (!user) return;
       
       try {
-        const response = await fetch(`/api/v1/user/profile`, {
+        const response = await apiFetch(`/user/profile`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (response.ok) {
@@ -142,7 +143,7 @@ export default function ProfilePage() {
       
 
       
-      const response = await fetch(`/api/v1/user/profile`, {
+      const response = await apiFetch(`/user/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -154,7 +155,7 @@ export default function ProfilePage() {
       if (response.ok) {
         // Refetch profile to get updated names from backend
         const fetchProfile = async () => {
-          const res = await fetch(`/api/v1/user/profile`, {
+          const res = await apiFetch(`/user/profile`, {
             headers: {
               'Authorization': `Bearer ${accessToken}`
             }
@@ -573,7 +574,7 @@ export default function ProfilePage() {
 
                         try {
                           const token = accessToken;
-                          await fetch(`/api/v1/user/profile`, {
+                          await apiFetch(`/user/profile`, {
                             method: 'PUT',
                             headers: {
                               'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { apiFetch } from '@/lib/api';
 
 interface User {
   emailAddresses: any;
@@ -23,8 +24,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = 'http://localhost:5174/api/v1';
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -42,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchCurrentUser = async (token: string) => {
     try {
-      const response = await fetch(`${API_URL}/auth/me`, {
+      const response = await apiFetch('/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -65,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (email: string, password: string, firstName?: string, lastName?: string) => {
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await apiFetch('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, firstName, lastName })
@@ -81,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string, rememberMe: boolean = false) => {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await apiFetch('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -103,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Logout user
   const logout = async () => {
     try {
-      await fetch(`${API_URL}/auth/logout`, {
+      await apiFetch('/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });
@@ -120,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Refresh access token
   const refreshToken = async () => {
     try {
-      const response = await fetch(`${API_URL}/auth/refresh`, {
+      const response = await apiFetch('/auth/refresh', {
         method: 'POST',
         credentials: 'include'
       });

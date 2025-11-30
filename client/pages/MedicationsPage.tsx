@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,7 +42,7 @@ function MedicationsPage() {
     const fetchMedications = async () => {
       try {
         setIsLoadingMeds(true);
-        const response = await fetch('/api/v1/medications', {
+        const response = await apiFetch('/medications', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }

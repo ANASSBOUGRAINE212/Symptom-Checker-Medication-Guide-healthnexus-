@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch, isDemoMode } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageContainer } from "@/components/ui/page-container";
@@ -40,7 +41,13 @@ interface UserStats {
 function Home() {
   const { user, isLoading, accessToken } = useAuth();
   const navigate = useNavigate();
-  const isAdmin = user?.email?.toLowerCase() === import.meta.env.VITE_ADMIN_EMAIL?.toLowerCase();
+  // Check if user is admin (also allow admin@demo.com in demo mode)
+  const isAdmin = (() => {
+    const email = user?.email?.toLowerCase();
+    if (!email) return false;
+    if (email === 'admin@demo.com') return true;
+    return email === import.meta.env.VITE_ADMIN_EMAIL?.toLowerCase();
+  })();
   
   const [stats, setStats] = useState<UserStats>({
     diagnosisCount: 0,
@@ -54,8 +61,15 @@ function Home() {
   useEffect(() => {
     const checkProfile = async () => {
       if (!user) return;
+      
+      // Skip profile check in demo mode
+      if (isDemoMode) {
+        setCheckedProfile(true);
+        return;
+      }
+      
       try {
-        const resp = await fetch(`/api/v1/user/profile`, {
+        const resp = await apiFetch(`/user/profile`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (resp.ok) {
@@ -80,10 +94,10 @@ function Home() {
       
       try {
         const [statsResponse, diagnosesResponse] = await Promise.all([
-          fetch(`/api/v1/user/diagnosis/stats`, {
+          apiFetch(`/user/diagnosis/stats`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
           }),
-          fetch(`/api/v1/user/diagnoses?limit=5`, {
+          apiFetch(`/user/diagnoses?limit=5`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
           })
         ]);

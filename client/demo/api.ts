@@ -56,6 +56,29 @@ export const apiFetch = async (endpoint: string, options?: RequestInit): Promise
       data = await MockBackend.deleteMedication(id!);
     } else if (endpoint.includes('/medications')) {
       data = await MockBackend.getMedications();
+    } else if (endpoint.includes('/user/diagnosis') && method === 'POST') {
+      data = await MockBackend.createDiagnosis(body.symptoms, body.notes);
+    } else if (endpoint.includes('/user/profile') && (method === 'PUT' || method === 'PATCH')) {
+      data = await MockBackend.updateProfile(body);
+    } else if (endpoint.includes('/user/profile')) {
+      data = await MockBackend.getCurrentUserProfile();
+    } else if (endpoint.includes('/user/diagnosis/stats')) {
+      data = { diagnosisCount: 0, lastDiagnosis: null, recentActivities: [] };
+    } else if (endpoint.includes('/user/diagnoses')) {
+      const diagnoses = await MockBackend.getDiagnoses();
+      data = { diagnoses, pagination: { page: 1, limit: 10, total: diagnoses.length, totalPages: 1 } };
+    } else if (endpoint.match(/\/user\/diagnosis\/[^/]+$/) && method === 'DELETE') {
+      const id = endpoint.split('/').pop();
+      data = await MockBackend.deleteDiagnosis(id!);
+    } else if (endpoint.match(/\/user\/diagnosis\/[^/]+$/)) {
+      const id = endpoint.split('/').pop();
+      data = { diagnosis: await MockBackend.getDiagnosisById(id!) };
+    } else if (endpoint.includes('/admin/diseases')) {
+      data = await MockBackend.getDiseases();
+    } else if (endpoint.includes('/admin/medications')) {
+      data = await MockBackend.getMedications();
+    } else if (endpoint.includes('/admin/stats')) {
+      data = { totalDiseases: 10, totalMedications: 15, totalUsers: 1, totalDiagnoses: 0, recentActivity: 0 };
     } else {
       throw new Error('Endpoint not implemented in demo mode');
     }

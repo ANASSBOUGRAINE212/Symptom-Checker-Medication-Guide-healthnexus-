@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -69,7 +70,7 @@ export default function DiagnosesPage() {
       
       try {
         setIsLoadingDiagnoses(true);
-        const response = await fetch(`/api/v1/user/diagnoses?page=${pagination.page}&limit=${pagination.limit}`, {
+        const response = await apiFetch(`/user/diagnoses?page=${pagination.page}&limit=${pagination.limit}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }

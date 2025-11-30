@@ -66,9 +66,11 @@ export class MockBackend {
     this.setCurrentUser(user);
 
     return {
-      user,
-      accessToken: 'mock_token_' + user.id,
-      refreshToken: 'mock_refresh_' + user.id
+      data: {
+        user,
+        accessToken: 'mock_token_' + user.id,
+        refreshToken: 'mock_refresh_' + user.id
+      }
     };
   }
 
@@ -87,9 +89,11 @@ export class MockBackend {
     this.setCurrentUser(user);
 
     return {
-      user,
-      accessToken: 'mock_token_' + user.id,
-      refreshToken: 'mock_refresh_' + user.id
+      data: {
+        user,
+        accessToken: 'mock_token_' + user.id,
+        refreshToken: 'mock_refresh_' + user.id
+      }
     };
   }
 
@@ -105,11 +109,28 @@ export class MockBackend {
     if (!user) throw new Error('Not authenticated');
 
     const profileStr = localStorage.getItem(STORAGE_KEYS.PROFILE);
-    const profile = profileStr ? JSON.parse(profileStr) : {};
+    const profile = profileStr ? JSON.parse(profileStr) : {
+      // Default demo profile so user doesn't get redirected to profile-setup
+      dateOfBirth: '1990-01-01',
+      gender: 'Other',
+      country: 'United States',
+      height: 170,
+      weight: 70,
+      bloodType: 'O+',
+      allergies: '',
+      darkMode: false,
+      dataSharing: true
+    };
 
     return {
-      ...user,
-      ...profile
+      data: {
+        user: {
+          ...user,
+          firstName: user.name.split(' ')[0] || 'Demo',
+          lastName: user.name.split(' ')[1] || 'User',
+          profile
+        }
+      }
     };
   }
 
@@ -119,14 +140,28 @@ export class MockBackend {
     if (!user) throw new Error('Not authenticated');
 
     const profileStr = localStorage.getItem(STORAGE_KEYS.PROFILE);
-    const profile = profileStr ? JSON.parse(profileStr) : {};
+    const existingProfile = profileStr ? JSON.parse(profileStr) : {};
 
-    const updatedProfile = { ...profile, ...data };
+    // Merge with existing profile data
+    const updatedProfile = { 
+      ...existingProfile, 
+      ...data,
+      // Ensure profile is marked as complete
+      dateOfBirth: data.dateOfBirth || existingProfile.dateOfBirth || '1990-01-01',
+      gender: data.gender || existingProfile.gender || 'Other',
+      country: data.country || existingProfile.country || 'United States'
+    };
     localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(updatedProfile));
 
     return {
-      ...user,
-      ...updatedProfile
+      data: {
+        user: {
+          ...user,
+          firstName: data.firstName || user.name.split(' ')[0] || 'Demo',
+          lastName: data.lastName || user.name.split(' ')[1] || 'User',
+          profile: updatedProfile
+        }
+      }
     };
   }
 

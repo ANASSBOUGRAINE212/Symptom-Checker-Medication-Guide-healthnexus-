@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getSeverityColor } from "@/constants";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -53,7 +54,7 @@ export default function DiagnosePage() {
   useEffect(() => {
     const fetchSymptoms = async () => {
       try {
-        const resp = await fetch('/api/v1/diseases', {
+        const resp = await apiFetch('/diseases', {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         if (!resp.ok) return;
@@ -86,7 +87,7 @@ export default function DiagnosePage() {
   const fetchDiagnosisResults = async (symptoms: string[]): Promise<DiagnosisResult[]> => {
     try {
       setIsLoadingDiseases(true);
-      const response = await fetch('/api/v1/diseases', {
+      const response = await apiFetch('/diseases', {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
@@ -180,7 +181,7 @@ export default function DiagnosePage() {
 
 
 
-      const response = await fetch('/api/v1/user/diagnosis', {
+      const response = await apiFetch('/user/diagnosis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

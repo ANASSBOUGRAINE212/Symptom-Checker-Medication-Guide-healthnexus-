@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { getSeverityColor, getCategoryColor } from "@/constants";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -57,7 +58,7 @@ export default function DiagnosisDetailPage() {
       if (!user || !id) return;
       
       try {
-        const response = await fetch(`/api/v1/user/diagnosis/${id}`, {
+        const response = await apiFetch(`/user/diagnosis/${id}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
@@ -97,7 +98,7 @@ export default function DiagnosisDetailPage() {
     setIsDeleting(true);
     
     try {
-      const response = await fetch(`/api/v1/user/diagnosis/${id}`, {
+      const response = await apiFetch(`/user/diagnosis/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`

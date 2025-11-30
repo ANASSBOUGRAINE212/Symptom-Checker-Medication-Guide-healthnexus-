@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useToast } from "@/hooks/use-toast";
@@ -38,11 +39,14 @@ export function ModernHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dbFirstName, setDbFirstName] = useState<string>("");
 
-  // Check if user is admin
+  // Check if user is admin (also allow admin@demo.com in demo mode)
   const isAdmin = (() => {
     const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-    const email = user?.email;
-    return !!adminEmail && !!email && email.toLowerCase() === adminEmail.toLowerCase();
+    const email = user?.email?.toLowerCase();
+    if (!email) return false;
+    // Allow admin@demo.com as admin in demo mode
+    if (email === 'admin@demo.com') return true;
+    return !!adminEmail && email === adminEmail.toLowerCase();
   })();
 
   // Fetch user's first name from database
@@ -50,7 +54,7 @@ export function ModernHeader({
     const fetchProfile = async () => {
       if (!user || !accessToken) return;
       try {
-        const response = await fetch("/api/v1/user/profile", {
+        const response = await apiFetch("/user/profile", {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }

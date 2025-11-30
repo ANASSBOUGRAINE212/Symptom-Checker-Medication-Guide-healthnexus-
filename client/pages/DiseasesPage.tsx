@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { getCategoryColor, getSeverityColor } from "@/constants";
 import {
   Search,
@@ -67,7 +68,7 @@ const isValidDiseaseObject = (disease: any): disease is Disease => {
     const fetchDiseases = async () => {
       try {
         setIsLoadingDiseases(true);
-        const response = await fetch('/api/v1/diseases', {
+        const response = await apiFetch('/diseases', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }

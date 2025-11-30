@@ -4,6 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiFetch } from "@/lib/api";
 import { SEVERITIES, PREVALENCE_OPTIONS, getSeverityColor, getCategoryColor, getDiseaseColor } from "@/constants";
 import { Button } from "@/components/ui/button";
 
@@ -148,7 +149,7 @@ export default function AdminPage() {
       
       try {
         setIsLoadingDiseases(true);
-         const response = await fetch('/api/v1/admin/diseases', {
+         const response = await apiFetch('/admin/diseases', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
@@ -191,7 +192,7 @@ export default function AdminPage() {
       
       try {
         setIsLoadingMedications(true);
-         const response = await fetch('/api/v1/admin/medications', {
+         const response = await apiFetch('/admin/medications', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
@@ -230,7 +231,7 @@ export default function AdminPage() {
       
       try {
         setIsLoadingStats(true);
-        const response = await fetch('/api/v1/admin/stats', {
+        const response = await apiFetch('/admin/stats', {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
@@ -294,7 +295,7 @@ export default function AdminPage() {
       };
 
       const token = accessToken;
-      const response = await fetch('/api/v1/admin/diseases', {
+      const response = await apiFetch('/admin/diseases', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -343,7 +344,7 @@ export default function AdminPage() {
         prevalence: diseaseFormData.prevalence
       };
 
-      const response = await fetch(`/api/v1/admin/diseases/${editingDisease.id}`, {
+      const response = await apiFetch(`/admin/diseases/${editingDisease.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -373,7 +374,7 @@ export default function AdminPage() {
 
   const handleDeleteDisease = async (id: string) => {
     try {
-      const response = await fetch(`/api/v1/admin/diseases/${id}`, {
+      const response = await apiFetch(`/admin/diseases/${id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -449,7 +450,7 @@ export default function AdminPage() {
           : []
       };
 
-      const response = await fetch('/api/v1/admin/medications', {
+      const response = await apiFetch('/admin/medications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -493,7 +494,7 @@ export default function AdminPage() {
           : []
       };
 
-      const response = await fetch(`/api/v1/admin/medications/${editingMedication.id}`, {
+      const response = await apiFetch(`/admin/medications/${editingMedication.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -523,7 +524,7 @@ export default function AdminPage() {
 
   const handleDeleteMedication = async (id: string) => {
     try {
-      const response = await fetch(`/api/v1/admin/medications/${id}`, {
+      const response = await apiFetch(`/admin/medications/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`
