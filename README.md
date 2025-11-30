@@ -1,4 +1,4 @@
-# 🏥 HealthNexus - Medical Symptom Checker & Health Management Platform
+# HealthNexus - Medical Symptom Checker & Health Management Platform
 
 > A comprehensive, production-ready healthcare management platform that empowers users to perform symptom-based assessments, access medical information, and maintain secure health records.
 
@@ -34,7 +34,7 @@
 ### What We Offer
 
 🔍 **Intelligent Symptom Analysis**
-- AI-powered symptom matching algorithm
+- intelligent symptom-to-disease matching by comparing user symptoms against disease database
 - Disease probability calculations
 - Comprehensive health assessments
 - Historical diagnosis tracking
