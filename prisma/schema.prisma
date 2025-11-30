@@ -195,5 +195,4 @@ model Diagnosis {
   @@map("diagnoses")
 }
 
-// Admin functionality is now handled by User.role = ADMIN
-// No separate Admin table needed
+
