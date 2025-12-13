@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # HealthNexus - Medical Symptom Checker & Health Management Platform
-=======
-﻿# HealthNexus - Medical Symptom Checker & Health Management Platform
->>>>>>> ae8eac6 (Major restructure: client/server to frontend/backend)
 
 > A comprehensive, production-ready healthcare management platform that empowers users to perform symptom-based assessments, access medical information, and maintain secure health records.
 
@@ -338,6 +334,7 @@ Format: Base64( IV + AuthTag + EncryptedData )
 | GET | `/v1/diagnosis/history` | Get history |
 | GET | `/v1/diagnosis/:id` | Get details |
 
+
 ---
 
 ## Getting Started
@@ -504,8 +501,7 @@ healthnexus/
 - **Medical Information** - Educational purposes only
 - **Icons** - [Lucide React](https://lucide.dev/)
 - **UI Components** - [Shadcn UI](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/)
+
 ---
 
 **Built with love for better healthcare accessibility and education**
-
-
