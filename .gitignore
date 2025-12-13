@@ -33,4 +33,3 @@ dist-ssr
 # Keep example files
 !.env.example
 !.env.production
-!.env.demo

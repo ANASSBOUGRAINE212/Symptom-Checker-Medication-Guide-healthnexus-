@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String?
+  lastName     String?
+  
+  emailVerified      Boolean   @default(false)
+  verificationCode   String?
+  verificationExpiry DateTime?
+  
+  resetCode          String?
+  resetExpiry        DateTime?
+  
+  isActive Boolean @default(true)
+  role     Role    @default(USER)
+  
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
+  lastLoginIp         String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile                  UserProfile?
+  diagnoses                Diagnosis[]
+  refreshTokens            RefreshToken[]
+  passwordResetTokens      PasswordResetToken[]
+  emailVerificationTokens  EmailVerificationToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @db.VarChar(500)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  ipAddress  String?
+  userAgent  String?  @db.Text
+  isRevoked  Boolean  @default(false)
+  
+  rememberMe Boolean  @default(false)
+  deviceName String?  @db.VarChar(255)
+  lastUsedAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([token(length: 255)])
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @db.VarChar(255)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([token])
+  @@map("password_reset_tokens")
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @db.VarChar(255)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([token])
+  @@map("email_verification_tokens")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dateOfBirth DateTime?
+  gender      String?
+  country     String?
+  
+  height      Int?
+  weight      Int?
+  bloodType   String?
+  allergies   String?  @db.Text
+  
+  darkMode            Boolean @default(false)
+  dataSharing         Boolean @default(true)
+  
+  securityPreferences Json?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_profiles")
+}
+
+model Diagnosis {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  symptomsEncrypted String   @db.Text
+  resultsEncrypted  String   @db.Text
+  
+  // MongoDB Disease reference (stored as string ObjectId)
+  diseaseId         String?
+  
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([diseaseId])
+  @@map("diagnoses")
+}
