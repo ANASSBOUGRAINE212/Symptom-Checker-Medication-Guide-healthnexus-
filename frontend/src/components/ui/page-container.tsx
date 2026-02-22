@@ -13,6 +13,7 @@ interface PageContainerProps {
   className?: string;
   headerClassName?: string;
   contentClassName?: string;
+  useBackground?: boolean;
 }
 
 export function PageContainer({
@@ -25,12 +26,13 @@ export function PageContainer({
   className = "",
   headerClassName = "",
   contentClassName = "",
+  useBackground = true,
 }: PageContainerProps) {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
-  return (
-    <div className={`min-h-screen flex flex-col bg-gradient-to-br from-blue-50/50 via-white to-green-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 ${className}`}>
+  const containerContent = (
+    <>
       <ModernHeader
         title={title}
         showBackButton={showBackButton}
@@ -53,6 +55,33 @@ export function PageContainer({
           </Link>
         </div>
       </footer>
+    </>
+  );
+
+  if (useBackground) {
+    return (
+      <div className={`relative min-h-screen ${className}`}>
+        {/* Background Image Section */}
+        <div className="fixed top-0 left-0 right-0 bottom-0 z-0">
+          <img 
+            src="/page-bg.jpg" 
+            alt="Background" 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-indigo-900/85 to-purple-900/90 dark:from-gray-900/95 dark:via-gray-900/90 dark:to-gray-900/95"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 min-h-screen flex flex-col">
+          {containerContent}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`min-h-screen flex flex-col bg-gradient-to-br from-blue-50/50 via-white to-green-50/50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 ${className}`}>
+      {containerContent}
     </div>
   );
 }

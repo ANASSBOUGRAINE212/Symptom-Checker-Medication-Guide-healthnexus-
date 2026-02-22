@@ -277,21 +277,45 @@ export const refreshAccessToken = async (refreshTokenString: string): Promise<{ 
     const newAccessToken = generateAccessToken(tokenPayload);
     const newRefreshToken = generateRefreshToken(tokenPayload);
 
-    await prisma.refreshToken.create({
+    // Try to create the refresh token, handle unique constraint error
+    try {
+      await prisma.refreshToken.create({
         data: {
-            token: newRefreshToken,
+          token: newRefreshToken,
+          userId: storedToken.user.id,
+          expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000),
+          ipAddress: storedToken.ipAddress,
+          userAgent: storedToken.userAgent
+        }
+      });
+    } catch (error: any) {
+      // If unique constraint error, the token already exists (rare race condition)
+      // Generate a new token and try again
+      if (error.code === 'P2002') {
+        const retryRefreshToken = generateRefreshToken({ ...tokenPayload, timestamp: Date.now() });
+        await prisma.refreshToken.create({
+          data: {
+            token: retryRefreshToken,
             userId: storedToken.user.id,
             expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000),
             ipAddress: storedToken.ipAddress,
             userAgent: storedToken.userAgent
-        }
-    });
+          }
+        });
+        logger.info({ userId: storedToken.user.id }, 'Access token refreshed (retry)');
+        return {
+          accessToken: newAccessToken,
+          refreshToken: retryRefreshToken
+        };
+      }
+      throw error;
+    }
 
     logger.info({ userId: storedToken.user.id }, 'Access token refreshed');
 
     return {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken
     };
 };
 

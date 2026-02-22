@@ -8,7 +8,10 @@ export async function connectMongoDB(): Promise<boolean> {
     return true;
   }
 
-  const mongoUri = process.env.MONGODB_URI;
+  // Use test database when NODE_ENV is 'test'
+  const mongoUri = process.env.NODE_ENV === 'test' && process.env.MONGODB_TEST_URI
+    ? process.env.MONGODB_TEST_URI
+    : process.env.MONGODB_URI;
   
   if (!mongoUri) {
     logger.warn('⚠️ MONGODB_URI not set, MongoDB features will be unavailable');

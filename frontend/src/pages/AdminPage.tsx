@@ -8,6 +8,7 @@ import { apiFetch } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { SEVERITIES, PREVALENCE_OPTIONS, getSeverityColor, getCategoryColor, getDiseaseColor } from "@/constants";
 import { Button } from "@/components/ui/button";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PageContainer } from "@/components/ui/page-container";
 import { ImportDataDialog } from "@/components/admin/ImportDataDialog";
+import DoctorsManagement from "@/components/admin/DoctorsManagement";
 import { 
   ArrowLeft, 
   Shield, 
@@ -31,7 +33,8 @@ import {
   BarChart3,
   Users,
   Activity,
-  Pill
+  Pill,
+  Stethoscope
 } from "lucide-react";
 
 interface Disease {
@@ -74,7 +77,14 @@ interface AdminStats {
   totalMedications: number;
   totalUsers: number;
   totalDiagnoses: number;
+  totalDoctors: number;
   recentActivity: number;
+}
+
+interface GrowthData {
+  date: string;
+  users: number;
+  doctors: number;
 }
 
 export default function AdminPage() {
@@ -90,6 +100,7 @@ export default function AdminPage() {
   const [medicationsError, setMedicationsError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [medicationSearchTerm, setMedicationSearchTerm] = useState("");
+  const [growthData, setGrowthData] = useState<GrowthData[]>([]);
   
   // Options for select dropdowns
   const [diseaseOptions, setDiseaseOptions] = useState<string[]>([]);
@@ -140,6 +151,7 @@ export default function AdminPage() {
     totalMedications: 0,
     totalUsers: 0,
     totalDiagnoses: 0,
+    totalDoctors: 0,
     recentActivity: 0
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
@@ -250,8 +262,36 @@ export default function AdminPage() {
           totalMedications: data.totalMedications || 0,
           totalUsers: data.totalUsers || 0,
           totalDiagnoses: data.totalDiagnoses || 0,
+          totalDoctors: data.totalDoctors || 0,
           recentActivity: data.recentActivity || 0
         });
+        
+        // Generate growth data for the last 7 days (mock data for now)
+        const generateGrowthData = () => {
+          const growthData: GrowthData[] = [];
+          const today = new Date();
+          const totalUsers = data.totalUsers || 0;
+          const totalDoctors = data.totalDoctors || 0;
+          
+          for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            
+            // Simulate growth (users and doctors gradually increasing)
+            const userGrowth = Math.floor(totalUsers * (0.7 + (6 - i) * 0.05));
+            const doctorGrowth = Math.floor(totalDoctors * (0.7 + (6 - i) * 0.05));
+            
+            growthData.push({
+              date: dateStr,
+              users: userGrowth,
+              doctors: doctorGrowth
+            });
+          }
+          return growthData;
+        };
+        
+        setGrowthData(generateGrowthData());
         setStatsError(null);
       } catch (err) {
         console.error('Error fetching admin stats:', err);
@@ -611,7 +651,7 @@ export default function AdminPage() {
             className={`bg-white/80 dark:bg-gray-800/80 border dark:border-gray-700 ${
               isMobile 
                 ? 'flex w-max gap-1 min-w-max'
-                : 'w-full grid grid-cols-4'
+                : 'w-full grid grid-cols-5'
             }`}
           >
             <TabsTrigger value="overview" className={isMobile ? 'px-4 py-2 text-sm whitespace-nowrap' : ''}>
@@ -623,6 +663,9 @@ export default function AdminPage() {
             <TabsTrigger value="medications" className={isMobile ? 'px-4 py-2 text-sm whitespace-nowrap' : ''}>
               {isMobile ? 'Medications' : 'Medication Management'}
             </TabsTrigger>
+            <TabsTrigger value="doctors" className={isMobile ? 'px-4 py-2 text-sm whitespace-nowrap' : ''}>
+              {isMobile ? 'Doctors' : 'Doctor Management'}
+            </TabsTrigger>
             <TabsTrigger value="analytics" className={isMobile ? 'px-4 py-2 text-sm whitespace-nowrap' : ''}>
               Analytics
             </TabsTrigger>
@@ -630,7 +673,7 @@ export default function AdminPage() {
 
           {/* Overview Tab */}
           <TabsContent value="overview">
-            <div className={`${isMobile ? 'space-y-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6'}`}>
+            <div className={`${isMobile ? 'space-y-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'}`}>
               <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
                 <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
                   <div className="flex items-center justify-between">
@@ -650,6 +693,17 @@ export default function AdminPage() {
                       <p className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>{stats.totalMedications}</p>
                     </div>
                     <Pill className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-green-200`} />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white border-0">
+                <CardContent className={`${isMobile ? 'p-4' : 'p-6'}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-cyan-100 ${isMobile ? 'text-sm' : ''}`}>Total Doctors</p>
+                      <p className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>{stats.totalDoctors}</p>
+                    </div>
+                    <Stethoscope className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-cyan-200`} />
                   </div>
                 </CardContent>
               </Card>
@@ -1465,8 +1519,67 @@ export default function AdminPage() {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics">
+            {/* Growth Charts */}
+            <div className="mb-6">
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg">
+                      <BarChart3 className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
+                    Growth Trends
+                  </CardTitle>
+                  <CardDescription className="text-base">User and Doctor registration over the last 7 days</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={growthData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
+                      <XAxis 
+                        dataKey="date" 
+                        stroke="#9CA3AF"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <YAxis 
+                        stroke="#9CA3AF"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                          border: '1px solid #E5E7EB',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                        }}
+                      />
+                      <Legend />
+                      <Line 
+                        type="monotone" 
+                        dataKey="users" 
+                        stroke="#8B5CF6" 
+                        strokeWidth={3}
+                        name="Users"
+                        dot={{ fill: '#8B5CF6', r: 4 }}
+                        activeDot={{ r: 6 }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="doctors" 
+                        stroke="#06B6D4" 
+                        strokeWidth={3}
+                        name="Doctors"
+                        dot={{ fill: '#06B6D4', r: 4 }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Existing Analytics Cards */}
             <div className={`${isMobile ? 'space-y-6' : 'grid grid-cols-1 md:grid-cols-2 gap-6'}`}>
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader className={isMobile ? 'p-4 pb-2' : ''}>
                   <CardTitle className={isMobile ? 'text-lg' : ''}>Disease Categories</CardTitle>
                   <CardDescription className={isMobile ? 'text-sm' : ''}>Distribution by category</CardDescription>
@@ -1505,7 +1618,7 @@ export default function AdminPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader className={isMobile ? 'p-4 pb-2' : ''}>
                   <CardTitle className={isMobile ? 'text-lg' : ''}>Medication by Disease</CardTitle>
                   <CardDescription className={isMobile ? 'text-sm' : ''}>Distribution by condition</CardDescription>
@@ -1534,6 +1647,11 @@ export default function AdminPage() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Doctors Tab */}
+          <TabsContent value="doctors">
+            <DoctorsManagement />
           </TabsContent>
         </Tabs>
       </div>

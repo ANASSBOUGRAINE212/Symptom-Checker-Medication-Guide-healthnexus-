@@ -18,7 +18,7 @@ export default function NotFound() {
       {/* Theme toggle is handled by the header */}
 
       <div className="max-w-2xl w-full">
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="bg-gradient-to-r from-red-500 to-pink-500 p-4 rounded-full">

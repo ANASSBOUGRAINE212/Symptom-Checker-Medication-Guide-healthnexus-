@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: healthnexus-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: WJ28@krhps
+      MYSQL_DATABASE: healthnexus_db
+      MYSQL_TEST_DATABASE: healthnexus_test
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pWJ28@krhps"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - healthnexus-network
+
+  # MongoDB Database 
+  mongodb:
+    image: mongo:7.0
+    container_name: healthnexus-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: healthnexus
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - healthnexus-network
+
+  # Backend API
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: healthnexus-backend
+    ports:
+      - "5174:5174"
+    environment:
+      # Database URLs 
+      DATABASE_URL: mysql://root:WJ28@krhps@mysql:3306/healthnexus_db
+      DATABASE_TEST_URL: mysql://root:WJ28@krhps@mysql:3306/healthnexus_test
+      
+      # MongoDB 
+      MONGODB_URI: mongodb://mongodb:27017/healthnexus
+      MONGODB_TEST_URI: mongodb://mongodb:27017/healthnexus_test
+      
+      # Admin Configuration
+      ADMIN_EMAIL: anassbougraine644@gmail.com
+      
+      # JWT Secrets
+      JWT_ACCESS_SECRET: your-super-secure-access-token-secret-change-in-production-2024
+      JWT_REFRESH_SECRET: your-super-secure-refresh-token-secret-change-in-production-2024
+      JWT_EXPIRY: 86400000
+      
+      # App Configuration
+      NODE_ENV: development
+      PORT: 5174
+      
+      # Security
+      COOKIE_SECRET: a09d3144e9404b9ea629762fb123e8beda4788e4d655c8feabf157a53b407bd6
+      CORS_ORIGIN: http://localhost:5173,http://localhost:5174
+      SESSION_EXPIRY: 86400000
+      ENCRYPTION_SECRET: your-super-secure-encryption-key-change-in-production-2024
+      
+      # Logging
+      LOG_LEVEL: warn
+      
+      # Email Configuration
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: anassbougraine644@gmail.com
+      SMTP_PASS: snmfnzdtbmwnhihk
+      
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - healthnexus-network
+    restart: unless-stopped
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: healthnexus-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:5174/api
+      VITE_ADMIN_EMAIL: anassbougraine644@gmail.com
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - healthnexus-network
+    restart: unless-stopped
+
+# volumes
+volumes:
+  mysql_data:
+    driver: local
+  mongo_data:
+    driver: local
+
+# Network for service communication
+networks:
+  healthnexus-network:
+    driver: bridge

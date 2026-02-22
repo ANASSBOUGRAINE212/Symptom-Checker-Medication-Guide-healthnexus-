@@ -94,9 +94,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Save tokens
-    setAccessToken(data.data.accessToken);
-    localStorage.setItem('accessToken', data.data.accessToken);
-    setUser(data.data.user);
+    setAccessToken(data.accessToken);
+    localStorage.setItem('accessToken', data.accessToken);
+    setUser(data.user);
   };
 
   // Logout user

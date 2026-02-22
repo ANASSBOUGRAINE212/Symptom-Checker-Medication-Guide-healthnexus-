@@ -7,7 +7,14 @@
     "dev": "node ./node_modules/vite/bin/vite.js",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "playwright:install": "playwright install"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",
@@ -59,13 +66,21 @@
     "vaul": "^0.9.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.2.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitest/ui": "^4.0.18",
     "autoprefixer": "^10.4.21",
+    "jsdom": "^28.1.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.9.3",
-    "vite": "^7.1.1"
+    "vite": "^7.1.1",
+    "vitest": "^4.0.18"
   }
 }

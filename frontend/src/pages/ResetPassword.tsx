@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { PageBackground } from '@/components/ui/page-background';
 
 const API_URL = 'http://localhost:5174/api/v1';
 
@@ -71,19 +72,20 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 ${isMobile ? 'p-4' : 'p-8'}`}>
-      <div className="mx-auto w-full max-w-md mt-20">
-        <div className="flex justify-center mb-6">
-          <img src="/icon.png" alt="HealthNexus Logo" className="h-12 w-12 rounded-xl" />
-        </div>
-
-        <div className="rounded-2xl p-6 md:p-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reset Password</h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Enter the code from your email and your new password
-            </p>
+    <PageBackground>
+      <div className={`min-h-screen ${isMobile ? 'p-4' : 'p-8'}`}>
+        <div className="mx-auto w-full max-w-md mt-20">
+          <div className="flex justify-center mb-6">
+            <img src="/icon.png" alt="HealthNexus Logo" className="h-12 w-12 rounded-xl" />
           </div>
+
+          <div className="rounded-2xl p-6 md:p-8 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 shadow-xl">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Reset Password</h2>
+              <p className="text-gray-600 dark:text-gray-300 mt-1">
+                Enter the code from your email and your new password
+              </p>
+            </div>
 
           {error && (
             <Alert variant="destructive" className="mb-4">
@@ -188,13 +190,14 @@ function ResetPasswordPage() {
             <Link to="/forgot-password" className="block text-sm text-blue-600 dark:text-blue-400 hover:underline">
               Didn't receive a code? Request new one
             </Link>
-            <Link to="/signin" className="block text-sm text-gray-600 dark:text-gray-400 hover:underline">
+            <Link to="/signin" className="block text-sm text-gray-600 dark:text-gray-300 hover:underline">
               ← Back to Sign In
             </Link>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+    </PageBackground>
   );
 }
 

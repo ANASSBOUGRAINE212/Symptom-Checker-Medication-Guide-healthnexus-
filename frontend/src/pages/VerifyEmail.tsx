@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Mail, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PageBackground } from "@/components/ui/page-background";
 
 export default function VerifyEmail() {
   const navigate = useNavigate();
@@ -141,42 +142,45 @@ export default function VerifyEmail() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center">
-            <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Email Verified!
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Redirecting to sign in...
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <PageBackground>
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 w-full max-w-md">
+            <CardContent className="pt-6 text-center">
+              <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Email Verified!
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Redirecting to sign in...
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </PageBackground>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto bg-blue-100 dark:bg-blue-900 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-            <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-          </div>
-          <CardTitle className="text-2xl">Verify Your Email</CardTitle>
-          <CardDescription>
-            We've sent a 6-digit verification code to
-            <br />
-            <strong>{email}</strong>
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleVerify} className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+    <PageBackground>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl">
+          <CardHeader className="text-center">
+            <div className="mx-auto bg-blue-100 dark:bg-blue-900 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+              <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            </div>
+            <CardTitle className="text-2xl text-gray-900 dark:text-white">Verify Your Email</CardTitle>
+            <CardDescription className="text-gray-700 dark:text-gray-200">
+              We've sent a 6-digit verification code to
+              <br />
+              <strong>{email}</strong>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleVerify} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
@@ -212,7 +216,7 @@ export default function VerifyEmail() {
             </Button>
 
             <div className="text-center">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
                 Didn't receive the code?
               </p>
               <Button
@@ -235,6 +239,7 @@ export default function VerifyEmail() {
           </form>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </PageBackground>
   );
 }

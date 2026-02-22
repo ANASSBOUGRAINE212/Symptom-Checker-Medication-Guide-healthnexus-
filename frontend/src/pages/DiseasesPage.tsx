@@ -222,13 +222,15 @@ const isValidDiseaseObject = (disease: any): disease is Disease => {
             </TabsList>
 
             <TabsContent value="symptoms">
-              <Card className={isMobile ? 'bg-white/90 dark:bg-gray-900/90' : ''}>
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-orange-500" />
+                    <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg">
+                      <AlertTriangle className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
                     Symptoms
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-base">
                     Common signs and symptoms of {selectedDisease?.name}
                   </CardDescription>
                 </CardHeader>
@@ -246,13 +248,15 @@ const isValidDiseaseObject = (disease: any): disease is Disease => {
             </TabsContent>
 
             <TabsContent value="causes">
-              <Card className={isMobile ? 'bg-white/90 dark:bg-gray-900/90' : ''}>
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Info className="h-5 w-5 text-blue-500" />
+                    <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg">
+                      <Info className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
                     Causes
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-base">
                     Common causes of {selectedDisease?.name}
                   </CardDescription>
                 </CardHeader>
@@ -271,13 +275,15 @@ const isValidDiseaseObject = (disease: any): disease is Disease => {
             </TabsContent>
 
             <TabsContent value="tests">
-              <Card className={isMobile ? 'bg-white/90 dark:bg-gray-900/90' : ''}>
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <TestTube className="h-5 w-5 text-purple-500" />
+                    <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white shadow-lg">
+                      <TestTube className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
                     Tests & Procedures
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-base">
                     Diagnostic tests and procedures for {selectedDisease.name}
                   </CardDescription>
                 </CardHeader>
@@ -295,13 +301,15 @@ const isValidDiseaseObject = (disease: any): disease is Disease => {
             </TabsContent>
 
             <TabsContent value="treatment">
-              <Card className={isMobile ? 'bg-white/90 dark:bg-gray-900/90' : ''}>
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Pill className="h-5 w-5 text-green-500" />
+                    <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg">
+                      <Pill className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
                     Treatment & Medications
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-base">
                     Available treatments and medications for {selectedDisease?.name}
                   </CardDescription>
                 </CardHeader>
@@ -325,13 +333,15 @@ const isValidDiseaseObject = (disease: any): disease is Disease => {
             </TabsContent>
 
             <TabsContent value="prevention">
-              <Card className={isMobile ? 'bg-white/90 dark:bg-gray-900/90' : ''}>
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5 text-emerald-500" />
+                    <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg">
+                      <Activity className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
                     Prevention
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-base">
                     How to prevent {selectedDisease?.name}
                   </CardDescription>
                 </CardHeader>

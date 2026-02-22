@@ -22,6 +22,8 @@ import profileRouter from "./routes/profile";
 import diseasesRouter from "./routes/diseases";
 import medicationsRouter from "./routes/medications";
 import adminRouter from "./routes/admin";
+import doctorsRouter from "./routes/doctors";
+import appointmentsRouter from "./routes/appointments";
 import v1Router from "./routes/v1/index";
 
 dotenv.config();
@@ -111,6 +113,15 @@ function createServer() {
   }
 
   app.use("/api/admin", adminLimiter, adminRouter);
+  
+  if (process.env.NODE_ENV === 'production') {
+    app.use("/api/doctors", medicalLimiter, doctorsRouter);
+    app.use("/api/appointments", authLimiter, appointmentsRouter);
+  } else {
+    app.use("/api/doctors", doctorsRouter);
+    app.use("/api/appointments", appointmentsRouter);
+  }
+  
   app.use(securityErrorHandler);
 
   return app;
@@ -157,14 +168,20 @@ const gracefulShutdown = async () => {
 process.on('SIGTERM', gracefulShutdown);
 process.on('SIGINT', gracefulShutdown);
 
-const app = createServer();
+// Only start the server if this file is run directly (not imported for tests)
+// Check if running directly by looking for tsx or node in the execution path
+const isMainModule = process.argv[1]?.includes('index.ts') || process.argv[1]?.includes('index.js');
 
-initializeServices().then(() => {
-  app.listen(PORT, () => {
-    logger.info(`Backend server running on http://localhost:${PORT}`);
+if (isMainModule) {
+  const app = createServer();
+
+  initializeServices().then(() => {
+    app.listen(PORT, () => {
+      logger.info(`Backend server running on http://localhost:${PORT}`);
+    });
+  }).catch((error) => {
+    logger.error({ err: error }, "Failed to initialize services");
   });
-}).catch((error) => {
-  logger.error({ err: error }, "Failed to initialize services");
-});
+}
 
 export { createServer };

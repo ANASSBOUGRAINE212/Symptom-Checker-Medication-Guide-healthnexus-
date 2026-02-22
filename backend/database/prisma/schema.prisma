@@ -37,6 +37,8 @@ model User {
   refreshTokens            RefreshToken[]
   passwordResetTokens      PasswordResetToken[]
   emailVerificationTokens  EmailVerificationToken[]
+  doctorProfile            Doctor?
+  appointments             Appointment[]
 
   @@map("users")
 }
@@ -93,6 +95,7 @@ model EmailVerificationToken {
 enum Role {
   USER
   ADMIN
+  DOCTOR
 }
 
 model UserProfile {
@@ -136,4 +139,94 @@ model Diagnosis {
   @@index([userId])
   @@index([diseaseId])
   @@map("diagnoses")
+}
+
+model Doctor {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  specialty   String
+  address     String   @db.Text
+  city        String
+  country     String
+  phone       String
+  bio         String?  @db.Text
+  
+  yearsOfExperience Int?
+  education     String?  @db.Text
+  languages     String?
+  
+  // Encrypted medical license number (never shown in frontend)
+  licenseNumberHash String
+  
+  isActive    Boolean  @default(false)
+  isVerified  Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  schedules   DoctorSchedule[]
+  appointments Appointment[]
+
+  @@index([specialty])
+  @@index([city])
+  @@index([country])
+  @@map("doctors")
+}
+
+model DoctorSchedule {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  
+  isActive  Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doctorId])
+  @@map("doctor_schedules")
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  doctorId    String
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  appointmentDate DateTime
+  appointmentTime String
+  
+  reason      String   @db.Text
+  notes       String?  @db.Text
+  
+  status      AppointmentStatus @default(PENDING)
+  visited     Boolean  @default(false)
+  needsFollowUp Boolean @default(false)
+  
+  diagnosisNotes String? @db.Text
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([doctorId])
+  @@index([appointmentDate])
+  @@map("appointments")
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
 }

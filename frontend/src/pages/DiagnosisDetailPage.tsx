@@ -7,6 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { PageBackground } from "@/components/ui/page-background";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -51,6 +62,7 @@ export default function DiagnosisDetailPage() {
   const [diagnosis, setDiagnosis] = useState<Diagnosis | null>(null);
   const [isLoadingDiagnosis, setIsLoadingDiagnosis] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Fetch diagnosis details
   useEffect(() => {
@@ -123,6 +135,7 @@ export default function DiagnosisDetailPage() {
       });
     } finally {
       setIsDeleting(false);
+      setShowDeleteDialog(false);
     }
   };
 
@@ -138,44 +151,48 @@ export default function DiagnosisDetailPage() {
   };
 
   // Show loading state
-  if (!isLoading || isLoading) {
+  if (isLoading || isLoadingDiagnosis) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading diagnosis details...</span>
+      <PageBackground>
+        <div className="flex items-center justify-center h-screen">
+          <div className="flex items-center gap-2 text-white">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading diagnosis details...</span>
+          </div>
         </div>
-      </div>
+      </PageBackground>
     );
   }
 
   // Redirect if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <Card className="w-96">
-          <CardContent className="p-6 text-center">
-            <h2 className="text-lg font-semibold mb-4">Authentication Required</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Please sign in to view diagnosis details
-            </p>
-            <Link to="/signin">
-              <Button>Sign In</Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
+      <PageBackground>
+        <div className="flex items-center justify-center h-screen">
+          <Card className="w-96 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl">
+            <CardContent className="p-6 text-center">
+              <h2 className="text-lg font-semibold mb-4">Authentication Required</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Please sign in to view diagnosis details
+              </p>
+              <Link to="/signin">
+                <Button>Sign In</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </PageBackground>
     );
   }
 
   // Show error if diagnosis not found
   if (!diagnosis) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+      <PageBackground>
+        <header className="bg-white/10 dark:bg-gray-800/10 backdrop-blur-md border-b border-white/20 dark:border-gray-700/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <Link to="/home" className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100">
+              <Link to="/home" className="flex items-center text-white hover:text-gray-200">
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Back to Home
               </Link>
@@ -184,7 +201,7 @@ export default function DiagnosisDetailPage() {
         </header>
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-8 text-center">
               <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Diagnosis Not Found</h2>
@@ -199,16 +216,16 @@ export default function DiagnosisDetailPage() {
             </CardContent>
           </Card>
         </main>
-      </div>
+      </PageBackground>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+    <PageBackground>
+      <header className="bg-white/10 dark:bg-gray-800/10 backdrop-blur-md border-b border-white/20 dark:border-gray-700/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link to="/home" className="flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100">
+            <Link to="/home" className="flex items-center text-white hover:text-gray-200">
               <ArrowLeft className="h-5 w-5 mr-2" />
               Back to Home
             </Link>
@@ -217,7 +234,7 @@ export default function DiagnosisDetailPage() {
                 <div className="bg-gradient-to-r from-red-500 to-pink-500 p-2 rounded-lg mr-3">
                   <Stethoscope className="h-5 w-5 text-white" />
                 </div>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Diagnosis Details</h1>
+                <h1 className="text-lg font-bold text-white">Diagnosis Details</h1>
               </div>
             </div>
           </div>
@@ -226,12 +243,14 @@ export default function DiagnosisDetailPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                  <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg">
+                    <Calendar className="h-5 w-5" strokeWidth={2.2} />
+                  </div>
+                  <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                     {formatDate(diagnosis.createdAt)}
                   </span>
                 </div>
@@ -239,7 +258,7 @@ export default function DiagnosisDetailPage() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => navigate(`/diagnose/edit/${diagnosis.id}`)}
+                    onClick={() => navigate('/diagnose', { state: { symptoms: diagnosis.symptoms } })}
                   >
                     <Edit className="h-4 w-4 mr-1" />
                     Edit
@@ -247,28 +266,19 @@ export default function DiagnosisDetailPage() {
                   <Button 
                     variant="destructive" 
                     size="sm"
-                    onClick={handleDelete}
+                    onClick={() => setShowDeleteDialog(true)}
                     disabled={isDeleting}
                   >
-                    {isDeleting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                        Deleting...
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Delete
-                      </>
-                    )}
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Delete
                   </Button>
                 </div>
               </div>
-              <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-4">
+              <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-4">
                 {diagnosis.disease ? diagnosis.disease.name : "Health Check"}
               </CardTitle>
               {diagnosis.disease && (
-                <CardDescription className="dark:text-gray-300">
+                <CardDescription className="dark:text-gray-300 text-base">
                   {diagnosis.disease.definition}
                 </CardDescription>
               )}
@@ -277,12 +287,15 @@ export default function DiagnosisDetailPage() {
               <div className="space-y-6">
                 {/* Symptoms */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                    <div className="inline-flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-md">
+                      <AlertTriangle className="h-4 w-4" strokeWidth={2.2} />
+                    </div>
                     Reported Symptoms
                   </h3>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {diagnosis.symptoms.map((symptom, index) => (
-                      <Badge key={index} variant="outline" className="bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800">
+                      <Badge key={index} variant="outline" className="bg-orange-50 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 border-orange-200 dark:border-orange-800 px-3 py-1">
                         {symptom.replace('_', ' ')}
                       </Badge>
                     ))}
@@ -323,12 +336,15 @@ export default function DiagnosisDetailPage() {
 
                 {/* Diagnosis Results */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                    <div className="inline-flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-md">
+                      <Stethoscope className="h-4 w-4" strokeWidth={2.2} />
+                    </div>
                     Diagnosis Results
                   </h3>
                   <div className="space-y-4">
                     {diagnosis.results.map((result, index) => (
-                      <Card key={index} className="bg-gray-50 dark:bg-gray-700 border-0">
+                      <Card key={index} className="bg-white/40 dark:bg-gray-700/40 backdrop-blur-sm border-white/40 dark:border-white/10 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300">
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium text-gray-900 dark:text-gray-100">
@@ -386,7 +402,49 @@ export default function DiagnosisDetailPage() {
           </Link>
         </div>
       </main>
-    </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-xl">
+              <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-lg">
+                <AlertTriangle className="h-5 w-5" strokeWidth={2.2} />
+              </div>
+              Delete Diagnosis?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base text-gray-600 dark:text-gray-300 pt-2">
+              Are you sure you want to delete this diagnosis? This action cannot be undone and all associated data will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              className="rounded-full"
+              disabled={isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white rounded-full"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </PageBackground>
   );
 }
 

@@ -1,507 +1,752 @@
-# HealthNexus - Medical Symptom Checker & Health Management Platform
+# HealthNexus - Medical Symptom Checker & Doctor Appointment System
 
-> A comprehensive, production-ready healthcare management platform that empowers users to perform symptom-based assessments, access medical information, and maintain secure health records.
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
-![React](https://img.shields.io/badge/React-18.3-61dafb)
-![Node.js](https://img.shields.io/badge/Node.js-16+-green)
-![Express](https://img.shields.io/badge/Express-4.18-lightgrey)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
-![MongoDB](https://img.shields.io/badge/MongoDB-7.0-green)
-![Prisma](https://img.shields.io/badge/Prisma-6.14-2D3748)
-![Mongoose](https://img.shields.io/badge/Mongoose-8.0-green)
+A comprehensive healthcare platform that combines AI-powered symptom checking, medication information, and doctor appointment management. Built with modern web technologies for a seamless user experience.
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Architecture](#architecture)
-- [Database Schema](#database-schema)
+- [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Security](#security)
-- [API Documentation](#api-documentation)
-- [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
-- [Documentation](#documentation)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Docker Setup](#docker-setup)
+- [Testing](#testing)
+- [User Roles & Permissions](#user-roles--permissions)
+- [Key Features Explained](#key-features-explained)
+- [API Documentation](#api-documentation)
+- [Database Schema](#database-schema)
+- [Security Features](#security-features)
+---
+
+## ✨ Features
+
+### For Patients
+- **Symptom Checker**: AI-powered symptom analysis with disease predictions
+- **Medication Guide**: Comprehensive database of medications with detailed information
+- **Doctor Search**: Find doctors by specialty, location, and availability
+- **Appointment Booking**: Schedule appointments with verified doctors
+- **Appointment Management**: View, track, and manage your appointments
+- **User Profile**: Manage personal and medical information
+- **Dark Mode**: Toggle between light and dark themes
+
+### For Doctors
+- **Doctor Registration**: Apply to become a verified doctor on the platform
+- **Professional Profile**: Manage professional information, bio, and credentials
+- **Schedule Management**: Set and update weekly availability
+- **Patient Management**: View all patients who have booked appointments
+- **Appointment Tracking**: Update appointment status, add diagnosis notes, and follow-up flags
+- **Patient History**: Access complete appointment history for each patient
+
+### For Administrators
+- **Doctor Verification**: Review and approve/reject doctor applications
+- **User Management**: Manage all users in the system
+- **Doctor Management**: View and manage verified doctors
+- **Disease Database**: Manage disease information (MongoDB)
+- **Medication Database**: Manage medication information (MongoDB)
+- **System Monitoring**: Track application health and performance
 
 ---
 
-## Overview
-
-**HealthNexus** is a modern, full-stack healthcare management platform built with enterprise-grade security and scalability in mind.
-
-### What We Offer
-
-**Intelligent Symptom Analysis**
-- Intelligent symptom-to-disease matching by comparing user symptoms against disease database
-- Disease probability calculations (70% user match + 30% disease coverage)
-- Comprehensive health assessments with top 20 results
-- Historical diagnosis tracking with encryption
-
-**Medical Information Database**
-- **6,626 diseases** with detailed information across 20+ categories
-- Comprehensive medications database with usage guidelines
-- Treatment recommendations and prevention strategies
-- Severity and prevalence classifications
-
-**Enterprise Security**
-- JWT-based authentication with refresh token rotation
-- AES-256-GCM encryption for health data
-- 15+ middleware security layers
-- Comprehensive import security with XSS/injection prevention
-
-**User Management**
-- Personal health profiles with medical data
-- Session management across devices
-- Privacy-first data handling
-- Dark/light mode support
-
-**Admin Dashboard**
-- Disease and medication CRUD operations
-- CSV/JSON import/export with security validation
-- User analytics and statistics
-- Template downloads for bulk imports
-
----
-
-## Architecture
-
-### System Architecture Diagram
-
-![System Architecture](docs/diagram-export-13-12-2025-00_10_44.png)
-
-### System Overview
-
-The system follows a three-tier architecture:
-- **Client Layer**: React SPA with TypeScript, TailwindCSS, ShadcnUI
-- **API Layer**: Express with 15+ middleware layers, JWT auth, rate limiting
-- **Data Layer**: Dual database (MySQL for users, MongoDB for medical data)
-
-### Dual Database Architecture
-
-| Database | Purpose | ORM/ODM | Tables/Collections |
-|----------|---------|---------|-------------------|
-| **MySQL** | User data, authentication, sessions | Prisma | 6 tables |
-| **MongoDB** | Medical data (diseases, medications) | Mongoose | 2 collections |
-
-### Why Dual Databases?
-
-- **MySQL**: ACID compliance for user data, transactions, relationships
-- **MongoDB**: Flexible schema for medical data, text search, scalability
-
----
-
-## Database Schema
-
-### Database Schema Diagram
-
-![Database Schema](docs/database%20schema.png)
-
-### MySQL Tables (6)
-
-| Table | Purpose |
-|-------|---------|
-| `users` | User accounts, authentication, roles |
-| `user_profiles` | Health profiles (height, weight, blood type, allergies) |
-| `refresh_tokens` | Session management, device tracking |
-| `diagnoses` | Encrypted diagnosis history |
-| `password_reset_tokens` | Password reset flow |
-| `email_verification_tokens` | Email verification flow |
-
-### MongoDB Collections (2)
-
-| Collection | Records | Purpose |
-|------------|---------|---------|
-| `diseases` | 6,626 | Disease database with symptoms, causes, treatments |
-| `medications` | Variable | Medication database with dosage, interactions |
-
-### Database Relationships
-
-```
-User (1) ----+---- (1) UserProfile
-             |
-             +---- (N) RefreshToken
-             |
-             +---- (N) Diagnosis ---- (ref) ---- Disease (MongoDB)
-             |
-             +---- (N) PasswordResetToken
-             |
-             +---- (N) EmailVerificationToken
-```
-
----
-
-## Key Features
-
-### Authentication & Security
-
-| Feature | Description |
-|---------|-------------|
-| JWT Authentication | Access tokens (15 min) + Refresh tokens (7-30 days) |
-| Token Rotation | Refresh tokens rotated on use for security |
-| Password Hashing | Bcrypt with 12 salt rounds |
-| Email Verification | 6-digit OTP with 10-minute expiry |
-| Account Lockout | Auto-lock after 5 failed attempts (15 min) |
-| Session Management | Track and revoke sessions across devices |
-| Data Encryption | AES-256-GCM for sensitive health data |
-
-### Symptom Diagnosis Algorithm
-
-```
-1. User selects symptoms
-2. Normalize symptom names (lowercase, remove special chars)
-3. Query diseases with matching symptoms (MongoDB $in with regex)
-4. Calculate match score for each disease:
-   - userMatchPercent = (matched / userSymptoms) x 100
-   - diseaseMatchPercent = (matched / diseaseSymptoms) x 100
-   - finalScore = (userMatchPercent x 0.7) + (diseaseMatchPercent x 0.3)
-5. Sort by score, return top 20
-6. Encrypt and store diagnosis
-```
-
-### Admin Import/Export System
-
-**Supported Formats:** CSV, JSON
-
-**Security Validations:**
-- File size limit: 10MB
-- Record limit: 10,000
-- Extension validation: .csv, .json only
-- XSS pattern detection
-- SQL injection prevention
-- Field length limits
-- Content sanitization
-
-### Middleware Stack (15 Layers)
-
-1. correlationId - Request tracking
-2. addVersionHeaders - API version headers
-3. deprecationWarning - Deprecated endpoint warnings
-4. CORS - Cross-origin resource sharing
-5. httpsRedirect - HTTP to HTTPS (production)
-6. securityHeaders - X-Frame-Options, X-XSS-Protection
-7. Helmet - HSTS, CSP headers
-8. generateNonce - CSP nonce for scripts
-9. mongoSanitize - NoSQL injection prevention
-10. hpp - HTTP Parameter Pollution protection
-11. sanitizeInput - XSS sanitization
-12. express.json - JSON body parsing (10MB limit)
-13. cookieParser - Cookie parsing
-14. securityLogger - Security event logging
-15. rateLimiters - Per-route rate limiting
-
-### Rate Limiting
-
-| Route | Window | Production | Development |
-|-------|--------|------------|-------------|
-| `/api/v1/*` | 15 min | 100 | 1000 |
-| `/api/auth/*` | 15 min | 5 | 100 |
-| `/api/diseases`, `/api/medications` | 15 min | 20 | 200 |
-| `/api/admin/*` | 15 min | 10 | 10 |
-
----
-
-## Tech Stack
+## 🛠 Tech Stack
 
 ### Frontend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 18.3 | UI Framework |
-| TypeScript | 5.9 | Type Safety |
-| Vite | 7.1 | Build Tool |
-| TailwindCSS | 3.4 | Styling |
-| Shadcn UI | - | Component Library |
-| React Query | 5.56 | Data Fetching |
-| React Hook Form | 7.53 | Form Management |
-| Zod | 3.23 | Validation |
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **React Router** for navigation
+- **TailwindCSS** for styling
+- **Shadcn/ui** for UI components
+- **Lucide React** for icons
+- **Context API** for state management
+- **Vitest** for unit testing
+- **Playwright** for E2E testing
 
 ### Backend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Node.js | 16+ | Runtime |
-| Express | 4.18 | Web Framework |
-| TypeScript | 5.9 | Type Safety |
-| Prisma | 6.14 | MySQL ORM |
-| Mongoose | 8.0 | MongoDB ODM |
-| JWT | 9.0 | Authentication |
-| Bcrypt | 3.0 | Password Hashing |
-| Nodemailer | 7.0 | Email Service |
+- **Node.js** with Express
+- **TypeScript** for type safety
+- **Prisma ORM** for MySQL database
+- **MongoDB** for disease/medication data
+- **JWT** for authentication
+- **bcrypt** for password hashing
+- **Helmet** for security headers
+- **Rate limiting** for API protection
+- **Jest** for testing
 
 ### Databases
+- **MySQL** - User data, appointments, doctor profiles
+- **MongoDB** - Disease and medication information
 
-| Database | Version | Purpose |
-|----------|---------|---------|
-| MySQL | 8.0+ | User Data |
-| MongoDB | 7.0+ | Medical Data |
-
----
-
-## Security
-
-### Defense in Depth (6 Layers)
-
-**Layer 1: Network Security**
-- HTTPS enforcement
-- CORS whitelist
-- Rate limiting
-
-**Layer 2: Input Validation**
-- Request sanitization (XSS)
-- NoSQL injection prevention
-- SQL injection prevention (Prisma)
-- HPP protection
-- File upload validation
-
-**Layer 3: Authentication**
-- Password hashing (bcrypt 12 rounds)
-- JWT verification
-- Token expiry & rotation
-- Account lockout
-- Email verification
-
-**Layer 4: Authorization**
-- Role-based access (USER/ADMIN)
-- Route protection
-- Resource ownership checks
-- Admin email whitelist
-
-**Layer 5: Data Protection**
-- Field-level encryption (AES-256-GCM)
-- Sensitive data not logged
-- PII protection
-- Secure cookie flags
-
-**Layer 6: Monitoring**
-- Security event logging
-- Failed login tracking
-- Correlation IDs
-- Audit trails
-
-### Encryption Details
-
-```
-Algorithm: AES-256-GCM (Authenticated Encryption)
-Key: SHA-256 hash of ENCRYPTION_SECRET
-IV: 16 bytes (random per encryption)
-Auth Tag: 16 bytes
-Format: Base64( IV + AuthTag + EncryptedData )
-```
+### Security
+- **JWT tokens** (access + refresh)
+- **bcrypt** password hashing
+- **Helmet** security headers
+- **CORS** configuration
+- **Rate limiting**
+- **Input sanitization**
+- **XSS protection**
+- **SQL injection prevention**
 
 ---
 
-## API Documentation
-
-### Base URLs
-- **Primary**: `http://localhost:5174/api`
-- **Versioned**: `http://localhost:5174/api/v1`
-
-### Authentication Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/register` | Create account |
-| POST | `/auth/login` | Authenticate |
-| POST | `/auth/logout` | Invalidate session |
-| POST | `/auth/refresh` | Refresh access token |
-| POST | `/auth/verify-email` | Verify email with OTP |
-| POST | `/auth/forgot-password` | Request password reset |
-| POST | `/auth/reset-password` | Reset password with OTP |
-| GET | `/auth/me` | Get current user |
-
-### Disease Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/diseases` | List diseases (paginated) |
-| GET | `/diseases/:id` | Get disease details |
-| GET | `/diseases/export/csv` | Export to CSV (Admin) |
-| GET | `/diseases/export/json` | Export to JSON (Admin) |
-| POST | `/diseases/import/csv` | Import CSV/JSON (Admin) |
-| POST | `/diseases` | Create disease (Admin) |
-| PUT | `/diseases/:id` | Update disease (Admin) |
-| DELETE | `/diseases/:id` | Delete disease (Admin) |
-
-### Diagnosis Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/v1/diagnosis` | Submit symptoms |
-| GET | `/v1/diagnosis/history` | Get history |
-| GET | `/v1/diagnosis/:id` | Get details |
-
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js v16+
-- MySQL 8.0+
-- MongoDB 7.0+
-- npm or yarn
-
-### Installation
-
-```bash
-# Clone repository
-git clone <repository-url>
-cd healthnexus
-
-# Install dependencies
-npm install
-cd backend && npm install
-cd ../frontend && npm install
-```
-
-### Environment Setup
-
-**Backend (.env)**
-```env
-PORT=5174
-NODE_ENV=development
-DATABASE_URL=mysql://user:password@localhost:3306/healthnexus
-MONGODB_URI=mongodb://localhost:27017/healthnexus
-JWT_ACCESS_SECRET=your-access-secret-key
-JWT_REFRESH_SECRET=your-refresh-secret-key
-ENCRYPTION_SECRET=your-32-character-encryption-key
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
-ADMIN_EMAIL=admin@healthnexus.com
-CORS_ORIGIN=http://localhost:5173
-```
-
-**Frontend (.env)**
-```env
-VITE_API_URL=http://localhost:5174/api
-VITE_APP_NAME=HealthNexus
-```
-
-### Database Setup
-
-```bash
-cd backend
-npm run db:generate
-npm run db:push
-```
-
-### Run Development
-
-```bash
-# Backend
-cd backend && npm run dev
-
-# Frontend
-cd frontend && npm run dev
-```
-
-### Access
-
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5174/api
-- Health Check: http://localhost:5174/api/health
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 healthnexus/
 ├── backend/
-│   ├── database/
-│   │   ├── mongodb/models/      # Mongoose models
-│   │   └── prisma/schema.prisma # MySQL schema
 │   ├── src/
-│   │   ├── controllers/         # Route handlers
-│   │   ├── lib/                 # Utilities (jwt, encryption, email)
-│   │   ├── middleware/          # Express middleware
-│   │   ├── routes/              # API routes
-│   │   ├── services/            # Business logic
-│   │   └── index.ts             # Entry point
+│   │   ├── controllers/      # Request handlers
+│   │   ├── routes/           # API routes
+│   │   ├── middleware/       # Auth, security, validation
+│   │   ├── lib/              # Utilities (database, logger, etc.)
+│   │   └── index.ts          # Server entry point
+│   ├── database/
+│   │   ├── prisma/           # Prisma schema and migrations
+│   │   └── mongodb/          # MongoDB connection
+│   ├── tests/                # Backend tests (Jest)
+│   ├── logs/                 # Application logs
 │   └── package.json
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── components/          # React components
-│   │   ├── contexts/            # Auth, Theme contexts
-│   │   ├── hooks/               # Custom hooks
-│   │   ├── lib/                 # API client, utilities
-│   │   ├── pages/               # Page components
-│   │   └── App.tsx
+│   │   ├── components/       # Reusable UI components
+│   │   ├── pages/            # Page components
+│   │   ├── contexts/         # React contexts (Auth, Theme)
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── lib/              # Utilities and API client
+│   │   └── constants/        # App constants
+│   ├── tests/                # Frontend tests (Vitest, Playwright)
 │   └── package.json
 │
-├── docs/
-│   ├── eraser-architecture-prompt.md  # System architecture (Eraser.io)
-│   ├── database-schema-eraser.md      # Database diagram (Eraser.io)
-│   ├── code2flow-diagram.txt          # Flowcharts (Code2flow)
-│   ├── diseases-list.md               # Disease list (6,626)
-│   ├── disease-categories.md          # Category breakdown
-│   └── sample-diseases-import.json    # Import sample
-│
-├── package.json
+├── docs/                     # Documentation files
+├── start.bat                 # Windows startup script
+├── start.sh                  # Unix/Mac startup script
 └── README.md
 ```
 
 ---
 
-## Documentation
+## 📦 Prerequisites
 
-### Architecture Diagrams
+Before you begin, ensure you have the following installed:
 
-| Document | Purpose | Tool |
-|----------|---------|------|
-| `docs/eraser-architecture-prompt.md` | Complete system architecture | Eraser.io |
-| `docs/database-schema-eraser.md` | Database ER diagram | Eraser.io |
-| `docs/code2flow-diagram.txt` | Flowcharts for all workflows | Code2flow |
-
-### Data Files
-
-| Document | Purpose |
-|----------|---------|
-| `docs/diseases-list.md` | Complete disease list (6,626) |
-| `docs/disease-categories.md` | Disease category breakdown |
-| `docs/sample-diseases-import.json` | Sample import file |
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **MySQL** (v8 or higher)
+- **MongoDB** (local or Atlas)
+- **Git**
 
 ---
 
-## Project Statistics
+## 🚀 Installation
 
-| Metric | Value |
-|--------|-------|
-| Diseases | 6,626 |
-| Disease Categories | 20+ |
-| API Endpoints | 35+ |
-| Frontend Pages | 18 |
-| MySQL Tables | 6 |
-| MongoDB Collections | 2 |
-| Middleware Layers | 15 |
-| Security Layers | 6 |
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd healthnexus
+```
+
+### 2. Install Backend Dependencies
+
+```bash
+cd backend
+npm install
+```
+
+### 3. Install Frontend Dependencies
+
+```bash
+cd ../frontend
+npm install
+```
 
 ---
+
+## ⚙️ Configuration
+
+### Backend Configuration
+
+Create a `.env` file in the `backend` directory:
+
+```env
+# Database - MySQL
+DATABASE_URL="mysql://username:password@localhost:3306/healthnexus_db"
+
+# Test Database (separate database for testing)
+DATABASE_TEST_URL="mysql://username:password@localhost:3306/healthnexus_test"
+
+# MongoDB Atlas or Local
+MONGODB_URI="mongodb+srv://username:password@cluster.mongodb.net/healthnexus?retryWrites=true&w=majority"
+
+# Test MongoDB (separate database for testing)
+MONGODB_TEST_URI="mongodb+srv://username:password@cluster.mongodb.net/healthnexus_test?retryWrites=true&w=majority"
+
+# Admin Configuration
+ADMIN_EMAIL="admin@example.com"
+
+# JWT Authentication
+JWT_ACCESS_SECRET="your-super-secure-access-token-secret-change-in-production"
+JWT_REFRESH_SECRET="your-super-secure-refresh-token-secret-change-in-production"
+JWT_EXPIRY=86400000
+
+# App Configuration
+NODE_ENV=development
+PORT=5174
+
+# Security Configuration
+COOKIE_SECRET="your-cookie-secret-key"
+CORS_ORIGIN="http://localhost:5173,http://localhost:5174"
+SESSION_EXPIRY=86400000
+
+# Logging
+LOG_LEVEL=warn
+
+# Field-Level Encryption
+ENCRYPTION_SECRET="your-encryption-key-change-in-production"
+
+# Email Configuration (for OTP verification)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+```
+
+### Frontend Configuration
+
+Create a `.env` file in the `frontend` directory:
+
+```env
+VITE_API_URL=http://localhost:5174/api
+VITE_ADMIN_EMAIL=admin@example.com
+```
+
+### Database Setup
+
+1. **Create MySQL Databases**:
+```sql
+CREATE DATABASE healthnexus_db;
+CREATE DATABASE healthnexus_test;
+```
+
+2. **Run Prisma Migrations**:
+```bash
+cd backend
+npx prisma migrate dev
+npx prisma generate
+```
+
+3. **MongoDB Setup**:
+   - Create a MongoDB database (local or Atlas)
+   - Import disease and medication data if available
+
+---
+
+##  Running the Application
+
+### Option 1: Using Startup Scripts
+
+**Windows:**
+```bash
+start.bat
+```
+
+**Mac/Linux:**
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+### Option 2: Manual Start
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
+npm run dev
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+### Access the Application
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5174
+- **API Health Check**: http://localhost:5174/api/health
+
+---
+
+## 🐳 Docker Setup
+
+The application is fully containerized with Docker for easy development and deployment.
+
+### What's Included
+
+- **MySQL 8.0** - User data, appointments, doctor profiles
+- **MongoDB 7.0** - Disease and medication information
+- **Backend API** - Node.js/Express application
+- **Frontend** - React/Vite application
+
+
+### Quick Start with Docker
+
+**Start all services:**
+```bash
+docker-compose up
+```
+
+**Start in background (detached mode):**
+```bash
+docker-compose up -d
+```
+
+**Stop services:**
+```bash
+docker-compose down
+```
+
+**Stop and remove all data:**
+```bash
+docker-compose down -v
+```
+
+### First Time Setup
+
+After starting containers for the first time, run database migrations:
+
+```bash
+# Enter backend container
+docker-compose exec backend sh
+
+# Run Prisma migrations
+npx prisma migrate dev
+
+# Create test database
+docker-compose exec mysql mysql -u root -pWJ28@krhps -e "CREATE DATABASE IF NOT EXISTS healthnexus_test;"
+
+# Exit container
+exit
+```
+
+### Access Containerized Application
+
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5174
+- **MySQL**: localhost:3307
+- **MongoDB**: localhost:27017
+
+
+
+### Docker Files
+
+- `backend/Dockerfile` - Backend container configuration
+- `frontend/Dockerfile` - Frontend container configuration
+- `docker-compose.yaml` - Orchestrates all services
+- `backend/.dockerignore` - Excludes files from backend build
+- `frontend/.dockerignore` - Excludes files from frontend build
+
+
+---
+
+## 🧪 Testing
+
+### Backend Tests (Jest)
+
+The backend has a comprehensive test suite with 143 tests covering all major functionality.
+
+**Run all tests:**
+```bash
+cd backend
+npm test
+```
+
+**Run specific test file:**
+```bash
+npm test -- auth.test.ts
+npm test -- doctors.test.ts
+npm test -- appointments.test.ts
+```
+
+**Run tests with coverage:**
+```bash
+npm test -- --coverage
+```
+
+**Test Suites:**
+- `auth.test.ts` - Authentication (15 tests)
+- `diseases.test.ts` - Disease CRUD (14 tests)
+- `medications.test.ts` - Medication CRUD (14 tests)
+- `doctors.test.ts` - Doctor management (17 tests)
+- `profile.test.ts` - User profiles (11 tests)
+- `appointments.test.ts` - Appointments (13 tests)
+- `authorization.test.ts` - Authorization (15 tests)
+- `schedule.test.ts` - Doctor schedules (12 tests)
+- `security.test.ts` - Security features (20 tests)
+
+**Test Database:**
+- Tests use a separate database (`healthnexus_test`)
+- Test accounts use `@healthnexus.test` email domain
+- Tests run in isolation and clean up after themselves
+- Real data is never affected by tests
+
+### Frontend Tests
+
+**Unit Tests (Vitest):**
+```bash
+cd frontend
+npm test
+```
+
+**E2E Tests (Playwright):**
+```bash
+cd frontend
+npm run test:e2e
+```
+
+**E2E Tests with UI:**
+```bash
+npm run test:e2e:ui
+```
+
+---
+
+## 👥 User Roles & Permissions
+
+### USER (Default)
+- Browse diseases and medications
+- Use symptom checker
+- Search for doctors
+- Book appointments
+- Manage personal profile
+- Apply to become a doctor
+
+### DOCTOR
+- All USER permissions
+- Manage professional profile
+- Set weekly availability schedule
+- View patient list
+- Update appointment status
+- Add diagnosis notes and follow-up flags
+- View patient appointment history
+
+### ADMIN
+- All USER permissions
+- Review and approve/reject doctor applications
+- Manage all users
+- Manage verified doctors
+- Deactivate doctor accounts
+- Access system health metrics
+- Manage disease/medication databases
+
+---
+
+## 🔑 Key Features Explained
+
+### 1. Authentication System
+
+**Registration Flow:**
+1. User signs up with email and password
+2. Email verification sent (OTP)
+3. User verifies email
+4. Account activated
+
+**Login Flow:**
+1. User enters credentials
+2. System validates and returns JWT tokens
+3. Access token (short-lived) for API requests
+4. Refresh token (long-lived) for token renewal
+
+**Security Features:**
+- Password hashing with bcrypt (12 salt rounds)
+- JWT token-based authentication
+- Refresh token rotation
+- Failed login attempt tracking
+- Account lockout after multiple failures
+
+### 2. Doctor Verification System
+
+**Application Process:**
+1. User applies as doctor (4-step form)
+   - Personal information
+   - Professional credentials (specialty, license, education)
+   - Contact information
+   - Bio, languages, and schedule
+2. License number encrypted with bcrypt
+3. Application submitted with `isVerified: false` and `isActive: false`
+4. Admin reviews application in dashboard
+5. Admin approves or rejects
+   - **Approve**: Doctor becomes active and verified
+   - **Reject**: Doctor profile deleted, user role reverted to USER
+
+**Important Notes:**
+- License numbers are encrypted and never displayed
+- Rejected doctors can reapply
+- Only verified doctors appear in public search
+- Only verified doctors can accept appointments
+
+### 3. Appointment System
+
+**Booking Flow:**
+1. Patient searches for doctors
+2. Selects doctor and views availability
+3. Chooses date and time
+4. Provides reason for visit
+5. Appointment created with status: PENDING
+
+**Appointment Statuses:**
+- **PENDING**: Awaiting confirmation
+- **CONFIRMED**: Doctor confirmed
+- **COMPLETED**: Visit completed
+- **CANCELLED**: Cancelled by patient/doctor
+- **NO_SHOW**: Patient didn't attend
+
+**Doctor Management:**
+- View all appointments
+- Update status
+- Mark as visited
+- Flag for follow-up
+- Add diagnosis notes
+- Add general notes
+
+### 4. Schedule Management
+
+**For Doctors:**
+- Set weekly availability (day, start time, end time)
+- Multiple time slots per day
+- Edit schedule anytime from profile
+- Example: Monday 9:00-17:00, Wednesday 14:00-20:00
+
+**For Patients:**
+- View doctor availability when booking
+- Only book during scheduled hours
+
+### 5. Patient Management (Doctors)
+
+**Features:**
+- View all patients who booked appointments
+- See patient contact information
+- View blood type and allergies
+- Access complete appointment history
+- Track appointment statistics (completed, upcoming, cancelled)
+- Click patient to see detailed history
+- Click appointment to update details
+
+---
+
+## 📡 API Documentation
+
+### Authentication Endpoints
+
+```
+POST   /api/v1/auth/register          - Register new user
+POST   /api/v1/auth/login             - Login user
+POST   /api/v1/auth/refresh           - Refresh access token
+POST   /api/v1/auth/logout            - Logout user
+POST   /api/v1/auth/verify-email      - Verify email with OTP
+POST   /api/v1/auth/forgot-password   - Request password reset
+POST   /api/v1/auth/reset-password    - Reset password
+```
+
+### User Endpoints
+
+```
+GET    /api/v1/user/profile           - Get user profile
+PUT    /api/v1/user/profile           - Update user profile
+GET    /api/v1/user/sessions          - Get active sessions
+DELETE /api/v1/user/sessions/:id      - Revoke session
+```
+
+### Doctor Endpoints
+
+```
+GET    /api/v1/doctors                - Get all verified doctors
+GET    /api/v1/doctors/:id            - Get doctor by ID
+POST   /api/v1/doctors/register       - Apply as doctor (public)
+PUT    /api/v1/doctors/profile        - Update own profile (doctor)
+PUT    /api/v1/doctors/profile/schedule - Update own schedule (doctor)
+PUT    /api/v1/doctors/:id/verify     - Approve doctor (admin)
+POST   /api/v1/doctors/:id/reject     - Reject doctor (admin)
+DELETE /api/v1/doctors/:id            - Deactivate doctor (admin)
+```
+
+### Appointment Endpoints
+
+```
+POST   /api/v1/appointments           - Create appointment
+GET    /api/v1/appointments           - Get all appointments (admin)
+GET    /api/v1/appointments/my-appointments - Get user appointments
+GET    /api/v1/appointments/doctor-appointments - Get doctor appointments
+PUT    /api/v1/appointments/:id       - Update appointment (doctor)
+DELETE /api/v1/appointments/:id       - Cancel appointment
+```
+
+### Disease & Medication Endpoints
+
+```
+GET    /api/diseases                  - Get all diseases
+GET    /api/diseases/:id              - Get disease by ID
+POST   /api/diseases                  - Create disease (admin)
+PUT    /api/diseases/:id              - Update disease (admin)
+DELETE /api/diseases/:id              - Delete disease (admin)
+
+GET    /api/medications               - Get all medications
+GET    /api/medications/:id           - Get medication by ID
+POST   /api/medications               - Create medication (admin)
+PUT    /api/medications/:id           - Update medication (admin)
+DELETE /api/medications/:id           - Delete medication (admin)
+```
+
+---
+
+## 🗄️ Database Schema
+
+### MySQL Tables (Prisma)
+
+**users**
+- id, email, passwordHash, firstName, lastName
+- emailVerified, role (USER/DOCTOR/ADMIN)
+- isActive, failedLoginAttempts, lockedUntil
+- createdAt, updatedAt
+
+**user_profiles**
+- userId (FK), dateOfBirth, gender, country
+- height, weight, bloodType, allergies
+- darkMode, dataSharing
+
+**doctors**
+- userId (FK), specialty, address, city, country
+- phone, bio, yearsOfExperience, education, languages
+- licenseNumberHash (encrypted)
+- isActive, isVerified
+
+**doctor_schedules**
+- doctorId (FK), dayOfWeek (0-6)
+- startTime, endTime, isActive
+
+**appointments**
+- userId (FK), doctorId (FK)
+- appointmentDate, appointmentTime
+- reason, notes, status
+- visited, needsFollowUp, diagnosisNotes
+
+**refresh_tokens**
+- userId (FK), token, expiresAt
+- ipAddress, userAgent, deviceName
+- isRevoked, rememberMe
+
+### MongoDB Collections
+
+**diseases**
+- name, category, symptoms, description
+- severity, treatments, prevention
+
+**medications**
+- name, genericName, brandNames
+- category, dosage, sideEffects
+- interactions, contraindications
+
+---
+
+## 🔒 Security Features
+
+### Authentication & Authorization
+- JWT-based authentication with access and refresh tokens
+- Role-based access control (USER, DOCTOR, ADMIN)
+- Password hashing with bcrypt (12 salt rounds)
+- Email verification with OTP
+- Password reset with secure tokens
+
+### API Security
+- **Helmet**: Security headers (CSP, X-Frame-Options, etc.)
+- **CORS**: Configured allowed origins
+- **Rate Limiting**: Different limits per endpoint type
+- **Input Sanitization**: XSS and NoSQL injection prevention
+- **HPP**: HTTP Parameter Pollution protection
+
+### Data Protection
+- License numbers encrypted with bcrypt
+- Sensitive data never exposed in API responses
+- Field-level encryption for diagnosis data
+- Secure session management
+
+### Monitoring & Logging
+- Structured logging with Pino
+- Security event logging
+- Failed login attempt tracking
+- Request correlation IDs
+
+---
+
+
+## 📝 Default Admin Account
+
+After running migrations, create an admin account:
+
+1. Register a new user with the email specified in `ADMIN_EMAIL`
+2. The system automatically assigns ADMIN role
+3. Login with admin credentials
+4. Access admin dashboard at `/admin`
+
+---
+
+## 🎨 UI Features
+
+### Theme Support
+- Light and dark mode
+- User preference saved in profile
+- Automatic theme persistence
+
+### Responsive Design
+- Mobile-first approach
+- Tablet and desktop optimized
+- Touch-friendly interfaces
+
+### Accessibility
+- ARIA labels
+- Keyboard navigation
+- Screen reader support
+- High contrast mode compatible
+
+---
+
+## 📚 Additional Resources
+
+### Documentation Files
+- `docs/disease-categories.md` - Disease categorization
+- `docs/diseases-list.md` - Disease database structure
+- `docs/database schema.png` - Visual database schema
+
+---
+
 
 ## Disclaimer
+### Important Medical Disclaimer:
 
-**Important Medical Disclaimer:**
-- This application is for **educational and informational purposes only**
-- It is **NOT a substitute for professional medical advice, diagnosis, or treatment**
+- This application is for educational and informational purposes only
+- It is NOT a substitute for professional medical advice, diagnosis, or treatment
 - Always seek the advice of your physician or qualified health provider
 - In case of emergency, call your local emergency services immediately
 
 ---
 
-## Acknowledgments
+##  Acknowledgments
 
-- **Medical Information** - Educational purposes only
-- **Icons** - [Lucide React](https://lucide.dev/)
-- **UI Components** - [Shadcn UI](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/)
+Built with love for better healthcare accessibility and education
 
 ---
 
-**Built with love for better healthcare accessibility and education**
+## 🖼️ Image Credits
+
+Background images used in the application are from Unsplash:
+
+- **Doctor/Healthcare Image**: [Woman in white dress sitting on black office rolling chair](https://unsplash.com/fr/photos/femme-en-robe-blanche-assise-sur-une-chaise-roulante-de-bureau-noire-uVnRa6mOLOM) by Unsplash
+- **Medication Image**: [White blue and orange medication pill](https://unsplash.com/fr/photos/pilule-de-medicament-blanc-bleu-et-orange-KltoLK6Mk-g) by Unsplash
+
+All images are used under the [Unsplash License](https://unsplash.com/license).
+
+

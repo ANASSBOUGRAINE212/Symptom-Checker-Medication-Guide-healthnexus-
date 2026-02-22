@@ -39,7 +39,7 @@ export default function PrivacyPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               HealthNexus Privacy Policy

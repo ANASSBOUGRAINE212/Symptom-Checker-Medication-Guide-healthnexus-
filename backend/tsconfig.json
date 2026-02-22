@@ -16,11 +16,12 @@
     "declarationMap": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"],
       "@database/*": ["./database/*"]
     }
   },
-  "include": ["src/**/*", "database/**/*"],
+  "include": ["src/**/*", "database/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist"]
 }

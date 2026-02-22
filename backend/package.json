@@ -7,12 +7,17 @@
     "dev": "node --import tsx src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "prisma:generate": "node ./node_modules/prisma/build/index.js generate --schema=./database/prisma/schema.prisma",
     "prisma:studio": "node ./node_modules/prisma/build/index.js studio --schema=./database/prisma/schema.prisma",
     "prisma:push": "node ./node_modules/prisma/build/index.js db push --schema=./database/prisma/schema.prisma",
     "prisma:migrate": "node ./node_modules/prisma/build/index.js migrate dev --schema=./database/prisma/schema.prisma",
     "db:push": "node ./node_modules/prisma/build/index.js db push --schema=./database/prisma/schema.prisma",
-    "db:studio": "node ./node_modules/prisma/build/index.js studio --schema=./database/prisma/schema.prisma"
+    "db:studio": "node ./node_modules/prisma/build/index.js studio --schema=./database/prisma/schema.prisma",
+    "seed:test": "node --import tsx tests/seed-test-accounts.ts",
+    "cleanup:test": "node --import tsx tests/cleanup-test-data.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.14.0",
@@ -45,12 +50,17 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/hpp": "^0.2.6",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^22.5.5",
     "@types/nodemailer": "^7.0.3",
+    "@types/supertest": "^6.0.3",
     "@types/uuid": "^10.0.0",
+    "jest": "^30.2.0",
     "prisma": "^6.14.0",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.6",
     "tsx": "^4.7.0",
     "typescript": "^5.9.3"
   }

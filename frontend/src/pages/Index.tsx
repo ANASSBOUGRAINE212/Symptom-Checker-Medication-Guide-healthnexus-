@@ -25,7 +25,7 @@ export default function Index() {
             <Heart className="h-12 w-12 text-white" />
           </div>
         </div>
-  <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">HealthNexus</h1>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">HealthNexus</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg mb-8">Your Health, Our Priority</p>
         <div className="flex items-center justify-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin text-blue-500" />

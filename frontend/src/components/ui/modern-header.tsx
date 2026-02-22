@@ -38,6 +38,7 @@ export function ModernHeader({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dbFirstName, setDbFirstName] = useState<string>("");
+  const [isVerifiedDoctor, setIsVerifiedDoctor] = useState(false);
 
   const isAdmin = (() => {
     const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
@@ -46,7 +47,7 @@ export function ModernHeader({
     return !!adminEmail && email === adminEmail.toLowerCase();
   })();
 
-  // Fetch user's first name from database
+  // Fetch user's first name and doctor verification status from database
   useEffect(() => {
     const fetchProfile = async () => {
       if (!user || !accessToken) return;
@@ -59,6 +60,18 @@ export function ModernHeader({
         if (response.ok) {
           const profileData = await response.json();
           setDbFirstName(profileData?.user?.firstName || "");
+        }
+
+        // Check if user is a verified doctor
+        if (user.role === 'DOCTOR') {
+          const doctorResponse = await fetch('http://localhost:5174/api/v1/doctors', {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+          });
+          if (doctorResponse.ok) {
+            const doctors = await doctorResponse.json();
+            const myDoctor = doctors.find((d: any) => d.userId === user.id);
+            setIsVerifiedDoctor(myDoctor?.isVerified && myDoctor?.isActive);
+          }
         }
       } catch (error) {
         // fallback: do nothing
@@ -93,10 +106,17 @@ export function ModernHeader({
   const navItems = [
     { name: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
     { name: "Diagnose", path: "/diagnose", icon: <Stethoscope className="h-5 w-5" /> },
+    { name: "Doctors", path: "/doctors", icon: <Stethoscope className="h-5 w-5" /> },
     { name: "Diseases", path: "/diseases", icon: <BookOpen className="h-5 w-5" /> },
     { name: "Medications", path: "/medications", icon: <Pill className="h-5 w-5" /> },
     { name: "Profile", path: "/profile", icon: <User className="h-5 w-5" /> },
   ];
+
+  // Add Patients link for verified doctors and admins only
+  const isDoctorOrAdmin = isAdmin || (user?.role === 'DOCTOR' && isVerifiedDoctor);
+  if (isDoctorOrAdmin) {
+    navItems.splice(3, 0, { name: "Patients", path: "/doctor-patients", icon: <User className="h-5 w-5" /> });
+  }
 
   if (isLoading) {
     return null;
@@ -105,9 +125,9 @@ export function ModernHeader({
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled
-        ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm"
-        : "bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm"
-        } border-b border-gray-200 dark:border-gray-800 ${className}`}
+        ? "bg-white/10 dark:bg-gray-900/10 backdrop-blur-md shadow-sm"
+        : "bg-white/5 dark:bg-gray-900/5 backdrop-blur-sm"
+        } border-b border-white/20 dark:border-gray-700/20 ${className}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
@@ -118,7 +138,7 @@ export function ModernHeader({
                 variant="ghost"
                 size="icon"
                 onClick={onBackClick}
-                className="mr-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                className="mr-2 text-white hover:text-gray-200"
               >
                 <ArrowLeft className="h-5 w-5" />
                 <span className="sr-only">Back</span>
@@ -134,7 +154,7 @@ export function ModernHeader({
                 </div>
               </Link>
             )}
-            <h1 className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="ml-2 text-xl font-bold text-white">
               {title}
             </h1>
           </div>
@@ -146,7 +166,7 @@ export function ModernHeader({
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-white/10 transition-colors"
                 >
                   {item.name}
                 </Link>
@@ -165,7 +185,7 @@ export function ModernHeader({
           {/* Right side controls */}
           <div className="flex items-center space-x-2">
             {!isMobile && (
-              <span className="text-sm text-gray-700 dark:text-gray-300 mr-2">
+              <span className="text-sm text-white mr-2">
                 {dbFirstName || user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")?.[0]}
               </span>
             )}
@@ -176,7 +196,7 @@ export function ModernHeader({
                 variant="ghost"
                 size="sm"
                 onClick={handleSignOut}
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                className="text-white hover:text-gray-200"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out

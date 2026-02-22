@@ -141,82 +141,105 @@ function Home() {
   }
 
   return (
-    <PageContainer title="HealthNexus" hideNavigation={false}>
-      {/* Welcome Section */}
-      <div className="text-center mb-8 sm:mb-12 px-4">
-        <div className="inline-flex items-center justify-center p-2 mb-4 bg-blue-100/60 dark:bg-blue-900/20 rounded-full shadow-sm">
-          <span className="text-4xl font-bold text-blue-700 dark:text-blue-300">Your Personal Health Assistant</span>
+    <div className="relative">
+      {/* Background Image Section - Extended to cards */}
+      <div className="absolute top-0 left-0 right-0 z-0" style={{ height: '110vh', minHeight: '900px' }}>
+        <img 
+          src="/hero-bg.jpg" 
+          alt="Healthcare background" 
+          className="w-full h-full object-cover object-center"
+          style={{ objectPosition: 'center 30%' }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 via-blue-900/85 to-blue-900/75 dark:from-gray-900/95 dark:via-gray-900/90 dark:to-gray-900/80"></div>
+        {/* Smooth fade to transparent at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent via-transparent to-white dark:to-gray-900"></div>
+      </div>
+
+      <PageContainer title="HealthNexus" hideNavigation={false} useBackground={false}>
+        {/* Hero Section */}
+        <div className="relative z-10 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center py-8">
+            {/* Left Side - Welcome Text */}
+            <div>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight text-white mb-6">
+                Your Partner in Health and Wellness
+              </h1>
+              <p className="text-xl text-blue-100 dark:text-gray-200 leading-relaxed mb-8">
+                Empowering you with intelligent health insights and personalized care. From symptom analysis to expert consultations, we're here to guide your journey toward better health, every step of the way.
+              </p>
+              <Link to="/diagnose">
+                <Button size="lg" className="h-16 rounded-full px-10 text-xl font-medium shadow-xl shadow-blue-500/30 bg-white text-blue-600 hover:bg-blue-50">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+
+            {/* Right Side - Quick Stats (Stacked) */}
+            <div className="grid grid-cols-1 gap-6">
+              <Card className="overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-300 rounded-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md">
+                <CardContent className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-600 dark:text-gray-300 font-medium text-base sm:text-lg">Diagnoses Made</p>
+                      {isLoadingStats ? (
+                        <div className="flex items-center">
+                          <Loader2 className="h-6 w-6 animate-spin mr-2 text-red-500" />
+                          <span className="text-2xl font-bold text-gray-900 dark:text-white">Loading...</span>
+                        </div>
+                      ) : (
+                        <p className="text-4xl sm:text-5xl font-bold mt-1 bg-gradient-to-r from-red-500 to-pink-600 bg-clip-text text-transparent">{stats.diagnosisCount}</p>
+                      )}
+                    </div>
+                    <div className="bg-gradient-to-br from-red-500 to-pink-600 p-3 rounded-2xl shadow-lg">
+                      <Stethoscope className="h-8 w-8 text-white" strokeWidth={2.2} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-300 rounded-xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-md">
+                <CardContent className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-600 dark:text-gray-300 font-medium text-base sm:text-lg">Last Diagnosis</p>
+                      {isLoadingStats ? (
+                        <div className="flex items-center">
+                          <Loader2 className="h-6 w-6 animate-spin mr-2 text-blue-500" />
+                          <span className="text-2xl font-bold text-gray-900 dark:text-white">Loading...</span>
+                        </div>
+                      ) : (
+                        <p className="text-4xl sm:text-5xl font-bold mt-1 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">{formatLastVisit(stats.lastDiagnosis)}</p>
+                      )}
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-lg">
+                      <Clock className="h-8 w-8 text-white" strokeWidth={2.2} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
-        <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Take control of your health with our comprehensive medical platform. <br className="sm:hidden" />
-          Get diagnoses, learn about diseases, track medications, and more.
-        </p>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-12 max-w-3xl mx-auto px-2 sm:px-0">
-        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-gradient-to-br from-red-500 to-pink-600 dark:from-red-600 dark:to-pink-700">
-          <CardContent className="p-6 sm:p-8 relative z-10 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-red-100 font-medium text-base sm:text-lg">Diagnoses Made</p>
-                {isLoadingStats ? (
-                  <div className="flex items-center">
-                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                    <span className="text-2xl font-bold">Loading...</span>
-                  </div>
-                ) : (
-                  <p className="text-4xl sm:text-5xl font-bold mt-1">{stats.diagnosisCount}</p>
-                )}
-              </div>
-              <div className="bg-white/20 p-3 rounded-full">
-                <Stethoscope className="h-8 w-8 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700">
-          <CardContent className="p-6 sm:p-8 relative z-10 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-blue-100 font-medium text-base sm:text-lg">Last Diagnosis</p>
-                {isLoadingStats ? (
-                  <div className="flex items-center">
-                    <Loader2 className="h-6 w-6 animate-spin mr-2" />
-                    <span className="text-2xl font-bold">Loading...</span>
-                  </div>
-                ) : (
-                  <p className="text-4xl sm:text-5xl font-bold mt-1">{formatLastVisit(stats.lastDiagnosis)}</p>
-                )}
-              </div>
-              <div className="bg-white/20 p-3 rounded-full">
-                <Clock className="h-8 w-8 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
         {/* Admin Access (visible only for admin and when there are diagnoses) */}
-  {isAdmin && (
-          <div className="mb-12 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800/50 dark:to-gray-800/80 rounded-xl p-6 border border-amber-100 dark:border-amber-900/30 shadow-sm max-w-3xl mx-auto">
+        {isAdmin && (
+          <div className="relative z-10 mb-12 bg-white/10 dark:bg-gray-800/20 backdrop-blur-md rounded-xl p-6 border border-white/20 dark:border-white/10 shadow-lg max-w-3xl mx-auto">
             <div className="flex items-center justify-center mb-4">
-              <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-full mr-3">
-                <Shield className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+              <div className="bg-white/20 dark:bg-white/10 p-2 rounded-full mr-3">
+                <Shield className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-amber-800 dark:text-amber-300">Admin Access</h3>
+              <h3 className="text-xl font-semibold text-white">Admin Access</h3>
             </div>
-            <p className="text-amber-700 dark:text-amber-200 mb-4 text-center">You have administrator privileges to manage the application database and settings.</p>
+            <p className="text-blue-100 dark:text-gray-200 mb-4 text-center">You have administrator privileges to manage the application database and settings.</p>
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
               <Link to="/admin">
-                <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 px-8 py-3 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
+                <Button className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 border-0 shadow-md hover:shadow-lg transition-all duration-300">
                   <Shield className="h-5 w-5 mr-2" />
                   Admin Dashboard
                 </Button>
               </Link>
               <Link to="/nav-test">
-                <Button variant="outline" className="px-6 py-2 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/30">
+                <Button variant="outline" className="px-6 py-2 border-white/40 text-white hover:bg-white/10 backdrop-blur-sm">
                   🔧 Navigation Test
                 </Button>
               </Link>
@@ -225,118 +248,86 @@ function Home() {
         )}
 
         {/* Main Navigation Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 px-4 sm:px-0 max-w-7xl mx-auto">
+        <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-0 max-w-7xl mx-auto mb-12">
           {/* Diagnose Card */}
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden bg-white dark:bg-gray-800 shadow-md">
-            <div className="h-2 bg-blue-500 w-full"></div>
-            <CardHeader className="pb-2 pt-5">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center text-xl font-bold">
-                  Diagnose Yourself
-                </CardTitle>
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full">
-                  <Stethoscope className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardHeader className="pb-3">
+              <div className="mb-3 inline-flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-lg">
+                <Stethoscope className="h-6 w-6" strokeWidth={2.2} />
               </div>
-              <CardDescription className="text-blue-600 dark:text-blue-400 font-medium">
-                Check your symptoms
-              </CardDescription>
+              <CardTitle className="text-lg">Diagnose Yourself</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Answer questions about your symptoms to get a possible diagnosis and recommendations.
               </p>
               <Link to="/diagnose" className="block">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white group-hover:shadow-md transition-all duration-300">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                   Start Diagnosis
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
             </CardContent>
           </Card>
 
           {/* Diseases Card */}
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden bg-white dark:bg-gray-800 shadow-md">
-            <div className="h-2 bg-green-500 w-full"></div>
-            <CardHeader className="pb-2 pt-5">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center text-xl font-bold">
-                  Disease Info
-                </CardTitle>
-                <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
-                  <BookOpen className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardHeader className="pb-3">
+              <div className="mb-3 inline-flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg">
+                <BookOpen className="h-6 w-6" strokeWidth={2.2} />
               </div>
-              <CardDescription className="text-green-600 dark:text-green-400 font-medium">
-                Learn about conditions
-              </CardDescription>
+              <CardTitle className="text-lg">Disease Info</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Browse our database of diseases, their symptoms, treatments, and prevention methods.
               </p>
               <Link to="/diseases" className="block">
-                <Button className="w-full bg-white hover:bg-green-50 text-green-600 border-green-200 hover:border-green-300 dark:bg-gray-800 dark:hover:bg-green-900/20 dark:text-green-400 dark:border-green-800 group-hover:shadow-md transition-all duration-300">
+                <Button className="w-full bg-white hover:bg-green-50 text-green-600 border border-green-200 hover:border-green-300 dark:bg-gray-800 dark:hover:bg-green-900/20 dark:text-green-400 dark:border-green-800">
                   Explore Diseases
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
             </CardContent>
           </Card>
 
           {/* Medications Card */}
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden bg-white dark:bg-gray-800 shadow-md">
-            <div className="h-2 bg-purple-500 w-full"></div>
-            <CardHeader className="pb-2 pt-5">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center text-xl font-bold">
-                  Medications
-                </CardTitle>
-                <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full">
-                  <Pill className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardHeader className="pb-3">
+              <div className="mb-3 inline-flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-rose-500 text-white shadow-lg">
+                <Pill className="h-6 w-6" strokeWidth={2.2} />
               </div>
-              <CardDescription className="text-purple-600 dark:text-purple-400 font-medium">
-                Find drug information
-              </CardDescription>
+              <CardTitle className="text-lg">Medications</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Search for medications, their uses, side effects, and interactions with other drugs.
               </p>
               <Link to="/medications" className="block">
-                <Button className="w-full bg-white hover:bg-purple-50 text-purple-600 border-purple-200 hover:border-purple-300 dark:bg-gray-800 dark:hover:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800 group-hover:shadow-md transition-all duration-300">
+                <Button className="w-full bg-white hover:bg-purple-50 text-purple-600 border border-purple-200 hover:border-purple-300 dark:bg-gray-800 dark:hover:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800">
                   View Medications
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
             </CardContent>
           </Card>
 
           {/* Profile Card */}
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden bg-white dark:bg-gray-800 shadow-md">
-            <div className="h-2 bg-orange-500 w-full"></div>
-            <CardHeader className="pb-2 pt-5">
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center text-xl font-bold">
-                  User Profile
-                </CardTitle>
-                <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-full">
-                  <User className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                </div>
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <CardHeader className="pb-3">
+              <div className="mb-3 inline-flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg">
+                <User className="h-6 w-6" strokeWidth={2.2} />
               </div>
-              <CardDescription className="text-orange-600 dark:text-orange-400 font-medium">
-                Manage your account
-              </CardDescription>
+              <CardTitle className="text-lg">User Profile</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 View and update your personal information, preferences, and account settings.
               </p>
               <Link to="/profile" className="block">
-                <Button className="w-full bg-white hover:bg-orange-50 text-orange-600 border-orange-200 hover:border-orange-300 dark:bg-gray-800 dark:hover:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800 group-hover:shadow-md transition-all duration-300">
+                <Button className="w-full bg-white hover:bg-orange-50 text-orange-600 border border-orange-200 hover:border-orange-300 dark:bg-gray-800 dark:hover:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800">
                   Go to Profile
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </Link>
             </CardContent>
@@ -344,19 +335,20 @@ function Home() {
         </div>
 
         {/* Diagnosis History */}
-        <div className="mt-8 sm:mt-12 px-4 sm:px-0 max-w-7xl mx-auto">
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg mb-8 overflow-hidden">
-            <div className="h-2 bg-blue-500 w-full"></div>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 pt-5">
+        <div className="relative z-10 mt-8 sm:mt-12 px-4 sm:px-0 max-w-7xl mx-auto">
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 mb-8 overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 pt-6">
               <div>
                 <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
-                  <Activity className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
+                  <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg mr-3">
+                    <Activity className="h-5 w-5" strokeWidth={2.2} />
+                  </div>
                   Diagnosis History
                 </CardTitle>
-                <CardDescription className="dark:text-gray-400">Your recent health diagnoses</CardDescription>
+                <CardDescription className="dark:text-gray-400 ml-13">Your recent health diagnoses</CardDescription>
               </div>
               <Link to="/diagnoses">
-                <Button variant="outline" size="sm" className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-300">
+                <Button variant="outline" size="sm" className="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-300 rounded-full">
                   View All
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
@@ -372,10 +364,10 @@ function Home() {
                 <div className="space-y-4">
                   {stats.recentDiagnoses.map((diagnosis) => (
                     <Link to={`/diagnosis/${diagnosis.id}`} key={diagnosis.id}>
-                      <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors shadow-sm hover:shadow-md">
+                      <div className="flex items-center justify-between p-4 bg-white/40 dark:bg-gray-700/40 backdrop-blur-sm rounded-2xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-300 shadow-md hover:shadow-lg border border-white/20 dark:border-white/5">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
-                            <Stethoscope className="h-5 w-5 text-red-600 dark:text-red-400" />
+                          <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-md">
+                            <Stethoscope className="h-5 w-5 text-white" strokeWidth={2.2} />
                           </div>
                           <div>
                             <p className="font-medium text-gray-900 dark:text-gray-100">
@@ -407,11 +399,13 @@ function Home() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Stethoscope className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">No diagnosis history yet</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500">Start a diagnosis to see your history here</p>
+                  <div className="inline-flex size-16 items-center justify-center rounded-3xl bg-gradient-to-br from-red-500 to-pink-600 text-white shadow-lg mb-4">
+                    <Stethoscope className="h-8 w-8" strokeWidth={2.2} />
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 font-medium">No diagnosis history yet</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">Start a diagnosis to see your history here</p>
                   <Link to="/diagnose" className="mt-4 inline-block">
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-300">
+                    <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transition-all duration-300 rounded-full shadow-lg">
                       Start Diagnosis
                       <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                     </Button>
@@ -422,10 +416,15 @@ function Home() {
           </Card>
 
           {/* Recent Activity */}
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100">Recent Activity</CardTitle>
-              <CardDescription className="dark:text-gray-400">Your latest health interactions</CardDescription>
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader className="pt-6">
+              <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
+                <div className="inline-flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg mr-3">
+                  <Activity className="h-5 w-5" strokeWidth={2.2} />
+                </div>
+                Recent Activity
+              </CardTitle>
+              <CardDescription className="dark:text-gray-400 ml-13">Your latest health interactions</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoadingStats ? (
@@ -436,10 +435,10 @@ function Home() {
               ) : stats.recentActivities.length > 0 ? (
                 <div className="space-y-4">
                   {stats.recentActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div key={activity.id} className="flex items-center justify-between p-4 bg-white/40 dark:bg-gray-700/40 backdrop-blur-sm rounded-2xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-300 shadow-md hover:shadow-lg border border-white/20 dark:border-white/5">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                          <Activity className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-md">
+                          <Activity className="h-5 w-5 text-white" strokeWidth={2.2} />
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 dark:text-gray-100">{activity.type}</p>
@@ -454,15 +453,18 @@ function Home() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Activity className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">No recent activity yet</p>
+                  <div className="inline-flex size-16 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg mb-4">
+                    <Activity className="h-8 w-8" strokeWidth={2.2} />
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 font-medium">No recent activity yet</p>
                   <p className="text-sm text-gray-400 dark:text-gray-500">Start using the app to see your activity here</p>
                 </div>
               )}
             </CardContent>
           </Card>
         </div>
-    </PageContainer>
+      </PageContainer>
+    </div>
   );
 }
 

@@ -36,7 +36,9 @@ export const generateAccessToken = (payload: TokenPayload): string => {
 
 export const generateRefreshToken = (payload: TokenPayload): string => {
   try {
-    const token = jwt.sign(payload, REFRESH_TOKEN_SECRET, {
+    // Add a unique jti (JWT ID) to prevent duplicate tokens when generated at the same second
+    const jti = randomBytes(16).toString('hex');
+    const token = jwt.sign({ ...payload, jti }, REFRESH_TOKEN_SECRET, {
       expiresIn: REFRESH_TOKEN_EXPIRY,
       issuer: 'healthnexus',
       audience: 'healthnexus-api'

@@ -42,3 +42,110 @@ export const putRequest = async (
     body: JSON.stringify(data)
   });
 };
+
+
+// Doctor API
+export const doctorApi = {
+  getAll: async (params?: { specialty?: string; city?: string; search?: string; includeUnverified?: string }) => {
+    const query = new URLSearchParams(params as any).toString();
+    const url = query ? `/doctors?${query}` : '/doctors';
+    return fetch(buildApiUrl(url, false));
+  },
+  
+  getById: async (id: string) => {
+    return fetch(buildApiUrl(`/doctors/${id}`, false));
+  },
+  
+  create: async (data: any, accessToken: string) => {
+    return fetch(buildApiUrl('/doctors', false), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  update: async (id: string, data: any, accessToken: string) => {
+    return fetch(buildApiUrl(`/doctors/${id}`, false), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  delete: async (id: string, accessToken: string) => {
+    return fetch(buildApiUrl(`/doctors/${id}`, false), {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+      credentials: 'include'
+    });
+  },
+  
+  updateSchedule: async (id: string, schedules: any[], accessToken: string) => {
+    return fetch(buildApiUrl(`/doctors/${id}/schedule`, false), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      credentials: 'include',
+      body: JSON.stringify({ schedules })
+    });
+  }
+};
+
+// Appointment API
+export const appointmentApi = {
+  create: async (data: any, accessToken: string) => {
+    return fetch(buildApiUrl('/appointments', false), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  getMyAppointments: async (accessToken: string) => {
+    return fetch(buildApiUrl('/appointments/my-appointments', false), {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+      credentials: 'include'
+    });
+  },
+  
+  getDoctorAppointments: async (accessToken: string) => {
+    return fetch(buildApiUrl('/appointments/doctor-appointments', false), {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+      credentials: 'include'
+    });
+  },
+  
+  updateStatus: async (id: string, data: any, accessToken: string) => {
+    return fetch(buildApiUrl(`/appointments/${id}`, false), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  cancel: async (id: string, accessToken: string) => {
+    return fetch(buildApiUrl(`/appointments/${id}`, false), {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+      credentials: 'include'
+    });
+  }
+};

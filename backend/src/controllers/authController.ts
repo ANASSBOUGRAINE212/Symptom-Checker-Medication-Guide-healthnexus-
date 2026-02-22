@@ -21,8 +21,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const result = await registerUser({ email, password, firstName, lastName });
 
     res.status(201).json({
-      success: true,
-      data: result,
+      ...result,
       message: 'Registration successful. Please verify your email.'
     });
   } catch (error) {
@@ -61,8 +60,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(200).json({
-      success: true,
-      data: { user: result.user, accessToken: result.accessToken },
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
       message: 'Login successful'
     });
   } catch (error) {
@@ -93,8 +93,8 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
     });
 
     res.status(200).json({
-      success: true,
-      data: { accessToken: result.accessToken },
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
       message: 'Token refreshed successfully'
     });
   } catch (error) {

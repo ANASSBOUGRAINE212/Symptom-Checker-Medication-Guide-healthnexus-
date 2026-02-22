@@ -3,10 +3,15 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IMedication extends Document {
   _id: mongoose.Types.ObjectId;
   name: string;
+  genericName?: string;
   purpose: string;
   disease: string[];
   category: string;
   categories?: string[];
+  description?: string;
+  dosageForm?: string;
+  strength?: string;
+  manufacturer?: string;
   sideEffects: string;
   dosage: string[];
   contraindications: string[];
@@ -14,6 +19,8 @@ export interface IMedication extends Document {
   howItWorks: string;
   whenToTake: string;
   warnings: string[];
+  storageInstructions?: string;
+  prescriptionRequired?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,17 +28,24 @@ export interface IMedication extends Document {
 const MedicationSchema = new Schema<IMedication>(
   {
     name: { type: String, required: true, unique: true },
-    purpose: { type: String, required: true },
+    genericName: { type: String },
+    purpose: { type: String, default: '' },
     disease: { type: [String], default: [] },
-    category: { type: String, required: true },
+    category: { type: String, default: 'General' },
     categories: { type: [String], default: [] },
-    sideEffects: { type: String, required: true },
-    dosage: { type: [String], required: true },
+    description: { type: String },
+    dosageForm: { type: String },
+    strength: { type: String },
+    manufacturer: { type: String },
+    sideEffects: { type: String, default: '' },
+    dosage: { type: [String], default: [] },
     contraindications: { type: [String], default: [] },
     interactions: { type: [String], default: [] },
-    howItWorks: { type: String, required: true },
-    whenToTake: { type: String, required: true },
+    howItWorks: { type: String, default: '' },
+    whenToTake: { type: String, default: '' },
     warnings: { type: [String], default: [] },
+    storageInstructions: { type: String },
+    prescriptionRequired: { type: Boolean, default: false },
   },
   {
     timestamps: true,

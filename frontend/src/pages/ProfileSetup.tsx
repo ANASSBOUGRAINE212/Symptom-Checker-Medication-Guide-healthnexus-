@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, User, Shield, Loader2 } from "lucide-react";
 import { useEffect } from 'react';
+import { PageBackground } from "@/components/ui/page-background";
 export default function ProfileSetup() {
   const { user, isLoading: authLoading, accessToken } = useAuth();
   const { toast } = useToast();
@@ -134,12 +135,14 @@ export default function ProfileSetup() {
   // Show loading
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading...</span>
+      <PageBackground>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="flex items-center gap-2 text-white">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading...</span>
+          </div>
         </div>
-      </div>
+      </PageBackground>
     );
   }
 
@@ -150,27 +153,28 @@ export default function ProfileSetup() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-gradient-to-r from-blue-600 to-green-600 p-3 rounded-full">
-              <Heart className="h-8 w-8 text-white" />
+    <PageBackground>
+      <div className="min-h-screen py-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-gradient-to-r from-blue-600 to-green-600 p-3 rounded-full">
+                <Heart className="h-8 w-8 text-white" />
+              </div>
             </div>
+            <h1 className="text-3xl font-bold text-white">Complete Your Profile</h1>
+            <p className="text-gray-200 mt-2">
+              Help us personalize your health experience
+            </p>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Complete Your Profile</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Help us personalize your health experience
-          </p>
-        </div>
 
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100">Health Profile Setup</CardTitle>
-            <CardDescription className="dark:text-gray-300">
-              This information helps us provide better health recommendations
-            </CardDescription>
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">Health Profile Setup</CardTitle>
+              <CardDescription className="text-gray-700 dark:text-gray-200">
+                This information helps us provide better health recommendations
+              </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -178,12 +182,12 @@ export default function ProfileSetup() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <User className="h-5 w-5 text-blue-600" />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Personal Information</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Personal Information</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300">First Name</Label>
+                    <Label htmlFor="firstName" className="text-gray-900 dark:text-white">First Name</Label>
                     <Input
                       id="firstName"
                       name="firstName"
@@ -197,7 +201,7 @@ export default function ProfileSetup() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300">Last Name</Label>
+                    <Label htmlFor="lastName" className="text-gray-900 dark:text-white">Last Name</Label>
                     <Input
                       id="lastName"
                       name="lastName"
@@ -213,7 +217,7 @@ export default function ProfileSetup() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="dateOfBirth" className="text-gray-700 dark:text-gray-300">Date of Birth</Label>
+                    <Label htmlFor="dateOfBirth" className="text-gray-900 dark:text-white">Date of Birth</Label>
                     <Input
                       id="dateOfBirth"
                       name="dateOfBirth"
@@ -227,7 +231,7 @@ export default function ProfileSetup() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-gray-700 dark:text-gray-300">Gender</Label>
+                    <Label className="text-gray-900 dark:text-white">Gender</Label>
                     <RadioGroup
                       value={formData.gender}
                       onValueChange={(value) => handleInputChange("gender", value)}
@@ -237,7 +241,7 @@ export default function ProfileSetup() {
                       {GENDERS.map((gender, index) => (
                         <div key={gender} className="flex items-center space-x-2">
                           <RadioGroupItem value={gender} id={`gender-${index}`} />
-                          <Label htmlFor={`gender-${index}`} className="text-gray-700 dark:text-gray-300">{gender}</Label>
+                          <Label htmlFor={`gender-${index}`} className="text-gray-900 dark:text-white">{gender}</Label>
                         </div>
                       ))}
                     </RadioGroup>
@@ -245,7 +249,7 @@ export default function ProfileSetup() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="country" className="text-gray-700 dark:text-gray-300">Country</Label>
+                  <Label htmlFor="country" className="text-gray-900 dark:text-white">Country</Label>
                   <Select value={formData.country} onValueChange={(value) => handleInputChange("country", value)} name="country">
                     <SelectTrigger id="country" className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                       <SelectValue placeholder="Select your country" />
@@ -265,12 +269,12 @@ export default function ProfileSetup() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Heart className="h-5 w-5 text-red-500" />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Medical Information</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Medical Information</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="height" className="text-gray-700 dark:text-gray-300">Height (cm)</Label>
+                    <Label htmlFor="height" className="text-gray-900 dark:text-white">Height (cm)</Label>
                     <Input
                       id="height"
                       name="height"
@@ -284,7 +288,7 @@ export default function ProfileSetup() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="weight" className="text-gray-700 dark:text-gray-300">Weight (kg)</Label>
+                    <Label htmlFor="weight" className="text-gray-900 dark:text-white">Weight (kg)</Label>
                     <Input
                       id="weight"
                       name="weight"
@@ -298,7 +302,7 @@ export default function ProfileSetup() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="bloodType" className="text-gray-700 dark:text-gray-300">Blood Type</Label>
+                    <Label htmlFor="bloodType" className="text-gray-900 dark:text-white">Blood Type</Label>
                     <Select value={formData.bloodType} onValueChange={(value) => handleInputChange("bloodType", value)} name="bloodType">
                       <SelectTrigger id="bloodType" className="dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                         <SelectValue placeholder="Select" />
@@ -315,7 +319,7 @@ export default function ProfileSetup() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="allergies" className="text-gray-700 dark:text-gray-300">Known Allergies</Label>
+                  <Label htmlFor="allergies" className="text-gray-900 dark:text-white">Known Allergies</Label>
                   <Input
                     id="allergies"
                     name="allergies"
@@ -331,14 +335,14 @@ export default function ProfileSetup() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-4">
                   <Shield className="h-5 w-5 text-green-500" />
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Preferences</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Preferences</h3>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">Dark Mode</Label>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Use dark theme for better night viewing</p>
+                      <Label className="text-gray-900 dark:text-white">Dark Mode</Label>
+                      <p className="text-sm text-gray-600 dark:text-gray-200">Use dark theme for better night viewing</p>
                     </div>
                     <Switch
                       checked={formData.darkMode}
@@ -348,8 +352,8 @@ export default function ProfileSetup() {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label className="text-gray-700 dark:text-gray-300">Anonymous Data Sharing</Label>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Help improve medical research</p>
+                      <Label className="text-gray-900 dark:text-white">Anonymous Data Sharing</Label>
+                      <p className="text-sm text-gray-600 dark:text-gray-200">Help improve medical research</p>
                     </div>
                     <Switch
                       checked={formData.dataSharing}
@@ -379,9 +383,8 @@ export default function ProfileSetup() {
             </form>
           </CardContent>
         </Card>
+        </div>
       </div>
-    </div>
+    </PageBackground>
   );
 }
-
-

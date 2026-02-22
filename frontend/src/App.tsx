@@ -22,6 +22,13 @@ import DiseasesPage from "./pages/DiseasesPage";
 import MedicationsPage from "./pages/MedicationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
+import DoctorsPage from "./pages/DoctorsPage";
+import DoctorDetailPage from "./pages/DoctorDetailPage";
+import DoctorRegisterPage from "./pages/DoctorRegisterPage";
+import MyAppointmentsPage from "./pages/MyAppointmentsPage";
+import DoctorDashboardPage from "./pages/DoctorDashboardPage";
+import DoctorPatientsPage from "./pages/DoctorPatientsPage";
+import DoctorProfilePage from "./pages/DoctorProfilePage";
 import PrivacyPage from "./pages/PrivacyPage";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -56,6 +63,13 @@ const App = () => (
               <Route path="/medications" element={<ProtectedRoute><MedicationsPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/sessions" element={<ProtectedRoute><SessionsPage /></ProtectedRoute>} />
+              <Route path="/doctors" element={<DoctorsPage />} />
+              <Route path="/doctors/:id" element={<DoctorDetailPage />} />
+              <Route path="/doctor-register" element={<DoctorRegisterPage />} />
+              <Route path="/appointments" element={<ProtectedRoute><MyAppointmentsPage /></ProtectedRoute>} />
+              <Route path="/doctor-dashboard" element={<ProtectedRoute><DoctorDashboardPage /></ProtectedRoute>} />
+              <Route path="/doctor-patients" element={<ProtectedRoute><DoctorPatientsPage /></ProtectedRoute>} />
+              <Route path="/doctor-profile" element={<ProtectedRoute><DoctorProfilePage /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
               <Route path="/privacy" element={<PrivacyPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

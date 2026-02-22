@@ -245,11 +245,12 @@ export const getAdminStats: RequestHandler = async (req, res) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const [diseaseCount, medicationCount, userCount, diagnosisCount] = await Promise.all([
+    const [diseaseCount, medicationCount, userCount, diagnosisCount, doctorCount] = await Promise.all([
       Disease.countDocuments(),
       Medication.countDocuments(),
       prisma.user.count(),
-      prisma.diagnosis.count()
+      prisma.diagnosis.count(),
+      prisma.doctor.count()
     ]);
 
     const recentActivity = await prisma.diagnosis.count({
@@ -273,6 +274,7 @@ export const getAdminStats: RequestHandler = async (req, res) => {
       totalMedications: medicationCount,
       totalUsers: userCount,
       totalDiagnoses: diagnosisCount,
+      totalDoctors: doctorCount,
       recentActivity,
       userGrowth: newUsers,
       topDiagnoses: []

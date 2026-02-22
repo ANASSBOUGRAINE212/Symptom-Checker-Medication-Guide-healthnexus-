@@ -4,7 +4,21 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-export const prisma = globalThis.prisma || new PrismaClient();
+// Use test database when NODE_ENV is 'test'
+const getDatabaseUrl = () => {
+  if (process.env.NODE_ENV === 'test' && process.env.DATABASE_TEST_URL) {
+    return process.env.DATABASE_TEST_URL;
+  }
+  return process.env.DATABASE_URL;
+};
+
+export const prisma = globalThis.prisma || new PrismaClient({
+  datasources: {
+    db: {
+      url: getDatabaseUrl(),
+    },
+  },
+});
 
 if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
@@ -24,7 +38,6 @@ export async function connectDB() {
 export async function disconnectDB() {
   try {
     await prisma.$disconnect();
-    console.log('Database disconnected');
   } catch (error) {
     console.error('Database disconnection failed:', error);
   }

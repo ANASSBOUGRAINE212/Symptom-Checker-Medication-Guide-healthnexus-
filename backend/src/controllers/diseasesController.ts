@@ -12,8 +12,8 @@ import {
 export async function getDiseases(req: Request, res: Response) {
   try {
     const { 
-      page = 1, 
-      limit = 20, 
+      page, 
+      limit, 
       search, 
       category, 
       severity,
@@ -41,32 +41,66 @@ export async function getDiseases(req: Request, res: Response) {
       query.severity = severity;
     }
 
-    const skip = (Number(page) - 1) * Number(limit);
     const sort: any = { [sortBy as string]: sortOrder === 'desc' ? -1 : 1 };
 
-    const [diseases, total] = await Promise.all([
-      Disease.find(query).sort(sort).skip(skip).limit(Number(limit)),
-      Disease.countDocuments(query)
-    ]);
+    // If pagination params are provided, apply them
+    if (page && limit) {
+      const skip = (Number(page) - 1) * Number(limit);
+      const diseases = await Disease.find(query).sort(sort).skip(skip).limit(Number(limit));
+      return res.json(diseases);
+    }
 
-    res.json({
-      diseases,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        total,
-        pages: Math.ceil(total / Number(limit))
-      }
-    });
+    // Otherwise return all matching diseases
+    const diseases = await Disease.find(query).sort(sort);
+    res.json(diseases);
   } catch (error) {
     console.error("Error fetching diseases:", error);
     res.status(500).json({ error: "Failed to fetch diseases" });
   }
 }
 
+export async function searchDiseases(req: Request, res: Response) {
+  try {
+    const { q, category, severity } = req.query;
+    
+    const query: any = {};
+    
+    if (q) {
+      query.$or = [
+        { name: { $regex: q, $options: 'i' } },
+        { category: { $regex: q, $options: 'i' } },
+        { definition: { $regex: q, $options: 'i' } }
+      ];
+    }
+    
+    if (category) {
+      query.$or = [
+        { category: category },
+        { categories: category }
+      ];
+    }
+    
+    if (severity) {
+      query.severity = severity;
+    }
+    
+    const diseases = await Disease.find(query).sort({ name: 1 }).limit(50);
+    res.json(diseases);
+  } catch (error) {
+    console.error("Error searching diseases:", error);
+    res.status(500).json({ error: "Failed to search diseases" });
+  }
+}
+
 export async function getDiseaseById(req: Request, res: Response) {
   try {
     const { id } = req.params;
+    
+    // Validate ObjectId format
+    if (!id || id === 'undefined' || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      return res.status(400).json({ error: "Invalid disease ID format" });
+    }
+    
     const disease = await Disease.findById(id);
     
     if (!disease) {
@@ -84,12 +118,30 @@ export async function createDisease(req: Request, res: Response) {
   try {
     const diseaseData = req.body;
     
+    // Validate required fields
+    if (!diseaseData.name || !diseaseData.category || !diseaseData.severity || !diseaseData.definition) {
+      return res.status(400).json({ error: "Missing required fields: name, category, severity, definition" });
+    }
+    
+    // Set defaults for optional fields
+    const disease = new Disease({
+      ...diseaseData,
+      prognosis: diseaseData.prognosis || '',
+      prevalence: diseaseData.prevalence || '',
+      symptoms: diseaseData.symptoms || [],
+      causes: diseaseData.causes || [],
+      testsAndProcedures: diseaseData.testsAndProcedures || [],
+      medications: diseaseData.medications || [],
+      treatments: diseaseData.treatments || [],
+      prevention: diseaseData.prevention || [],
+      categories: diseaseData.categories || []
+    });
+    
     const existing = await Disease.findOne({ name: diseaseData.name });
     if (existing) {
       return res.status(400).json({ error: "Disease with this name already exists" });
     }
     
-    const disease = new Disease(diseaseData);
     await disease.save();
     
     res.status(201).json(disease);
@@ -103,6 +155,11 @@ export async function updateDisease(req: Request, res: Response) {
   try {
     const { id } = req.params;
     const updateData = req.body;
+    
+    // Validate ObjectId format
+    if (!id || id === 'undefined' || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      return res.status(400).json({ error: "Invalid disease ID format" });
+    }
     
     const disease = await Disease.findByIdAndUpdate(id, updateData, { new: true });
     
@@ -120,6 +177,11 @@ export async function updateDisease(req: Request, res: Response) {
 export async function deleteDisease(req: Request, res: Response) {
   try {
     const { id } = req.params;
+    
+    // Validate ObjectId format
+    if (!id || id === 'undefined' || !/^[0-9a-fA-F]{24}$/.test(id)) {
+      return res.status(400).json({ error: "Invalid disease ID format" });
+    }
     
     const disease = await Disease.findByIdAndDelete(id);
     

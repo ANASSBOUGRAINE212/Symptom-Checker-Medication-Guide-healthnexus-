@@ -304,7 +304,7 @@ export const getDiagnosisById: RequestHandler = async (req, res) => {
       return res.status(400).json({ error: 'Diagnosis ID is required' });
     }
     
-    const diagnosis = await prisma.diagnosis.findUnique({
+    const diagnosis = await prisma.diagnosis.findFirst({
       where: { 
         id,
         userId: req.user.id

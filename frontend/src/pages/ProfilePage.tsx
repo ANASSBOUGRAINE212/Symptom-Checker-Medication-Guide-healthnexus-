@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { PageContainer } from "@/components/ui/page-container";
+import { PageBackground } from "@/components/ui/page-background";
 import { useTheme } from "@/providers/ThemeProvider";
 import { 
   ArrowLeft, 
@@ -69,7 +70,10 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!user) return;
+      if (!user) {
+        setIsLoadingProfile(false);
+        return;
+      }
       
       try {
         const response = await apiFetch(`/user/profile`, {
@@ -116,7 +120,7 @@ export default function ProfilePage() {
       }
     };
 
-    if (!isLoading && user) {
+    if (!isLoading) {
       fetchProfile();
     }
   }, [user, isLoading, setTheme, toast, accessToken]);
@@ -226,31 +230,35 @@ export default function ProfilePage() {
   // Show loading state
   if (isLoading || isLoadingProfile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading profile...</span>
+      <PageBackground>
+        <div className="flex items-center justify-center h-screen">
+          <div className="flex items-center gap-2 text-white">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Loading profile...</span>
+          </div>
         </div>
-      </div>
+      </PageBackground>
     );
   }
 
   // Redirect if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
-        <Card className="w-96">
-          <CardContent className="p-6 text-center">
-            <h2 className="text-lg font-semibold mb-4">Authentication Required</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Please sign in to access your profile
+      <PageBackground>
+        <div className="flex items-center justify-center h-screen">
+          <Card className="w-96 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl">
+            <CardContent className="p-6 text-center">
+              <h2 className="text-lg font-semibold mb-4">Authentication Required</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Please sign in to access your profile
             </p>
             <Link to="/signin">
               <Button>Sign In</Button>
             </Link>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </PageBackground>
     );
   }
 
@@ -297,7 +305,7 @@ export default function ProfilePage() {
       <div className="max-w-4xl mx-auto">
         {/* Profile Header */}
         <div className="mb-8">
-          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center gap-6">
                 <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
@@ -349,7 +357,7 @@ export default function ProfilePage() {
 
           {/* Personal Information */}
           <TabsContent value="personal">
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                   <User className="h-5 w-5" />
@@ -468,7 +476,7 @@ export default function ProfilePage() {
 
           {/* Medical Information */}
           <TabsContent value="medical">
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                   <Heart className="h-5 w-5" />
@@ -547,7 +555,7 @@ export default function ProfilePage() {
 
           {/* Settings */}
           <TabsContent value="settings">
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+            <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                   <Shield className="h-5 w-5" />
@@ -610,6 +618,80 @@ export default function ProfilePage() {
                     />
                   </div>
                 </div>
+
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Professional Account</h3>
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-3">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                      Are you a medical professional? Apply to become a verified doctor on HealthNexus and start accepting appointments.
+                    </p>
+                    <Link to="/doctor-register">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                        <User className="h-4 w-4 mr-2" />
+                        Apply as a Doctor
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Appointments</h3>
+                  <Link to="/appointments">
+                    <Button variant="outline" className="w-full justify-start">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      My Appointments
+                    </Button>
+                  </Link>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    View and manage your upcoming and past appointments
+                  </p>
+                </div>
+
+                {user?.role === 'DOCTOR' && (
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Doctor Portal</h3>
+                    <div className="space-y-2">
+                      <Link to="/doctor-dashboard">
+                        <Button variant="outline" className="w-full justify-start">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Doctor Dashboard
+                        </Button>
+                      </Link>
+                      <Link to="/doctor-patients">
+                        <Button variant="outline" className="w-full justify-start">
+                          <User className="h-4 w-4 mr-2" />
+                          My Patients
+                        </Button>
+                      </Link>
+                      <Link to="/doctor-profile">
+                        <Button variant="outline" className="w-full justify-start">
+                          <User className="h-4 w-4 mr-2" />
+                          Doctor Profile
+                        </Button>
+                      </Link>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Manage your appointments, patients, and professional profile
+                    </p>
+                  </div>
+                )}
+
+                {user?.role !== 'DOCTOR' && (
+                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Professional Account</h3>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-3">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                        Are you a medical professional? Apply to become a verified doctor on HealthNexus and start accepting appointments.
+                      </p>
+                      <Link to="/doctor-register">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                          <User className="h-4 w-4 mr-2" />
+                          Apply as a Doctor
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                )}
 
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Security</h3>

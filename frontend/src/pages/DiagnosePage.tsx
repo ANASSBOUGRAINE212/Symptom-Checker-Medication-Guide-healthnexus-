@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getSeverityColor } from "@/constants";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiFetch } from "@/lib/api";
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { PageBackground } from "@/components/ui/page-background";
 
 import { useToast } from "@/hooks/use-toast";
 import { PageContainer } from "@/components/ui/page-container";
@@ -38,6 +39,7 @@ interface DiagnosisResult {
 
 export default function DiagnosePage() {
   const { user, isLoading, accessToken } = useAuth();
+  const location = useLocation();
   
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -49,6 +51,22 @@ export default function DiagnosePage() {
   const [isLoadingDiseases, setIsLoadingDiseases] = useState(false);
   const [symptomOptions, setSymptomOptions] = useState<SymptomOption[]>([]);
   const [search, setSearch] = useState("");
+
+  // Pre-fill symptoms from location state (when editing a diagnosis)
+  useEffect(() => {
+    if (location.state?.symptoms && Array.isArray(location.state.symptoms)) {
+      const normalizedSymptoms = location.state.symptoms.map((s: string) => 
+        s.trim().toLowerCase().replace(/\s+/g, '_')
+      );
+      setSelectedSymptoms(normalizedSymptoms);
+      
+      // Show a toast to inform the user
+      toast({
+        title: "Symptoms Loaded",
+        description: "Previous symptoms have been loaded. You can modify them and get a new diagnosis.",
+      });
+    }
+  }, [location.state, toast]);
 
   // On mount, fetch diseases and derive unique symptoms list
   useEffect(() => {
@@ -329,7 +347,7 @@ export default function DiagnosePage() {
                 </Card>
               ))
             ) : (
-              <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+              <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
                 <CardContent className="p-8 text-center">
                   <p className="text-gray-600 dark:text-gray-400">No matching diagnoses found for your symptoms.</p>
                   <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Consider consulting with a healthcare provider.</p>
@@ -360,7 +378,7 @@ export default function DiagnosePage() {
     return (
       <PageContainer title="Analyzing Symptoms" showBackButton={true} backTo="/home">
         <div className="flex items-center justify-center h-[60vh]">
-          <Card className="max-w-md w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+          <Card className="max-w-md w-full bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
             <CardContent className="p-8 text-center">
               <div className="flex items-center justify-center mb-6">
                 <div className="bg-gradient-to-r from-red-500 to-pink-500 p-4 rounded-full">
@@ -412,7 +430,7 @@ export default function DiagnosePage() {
           </Card>
         </div>
 
-        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg">
+        <Card className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-md border-white/40 dark:border-white/10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-gray-900 dark:text-gray-100">
               Select Your Symptoms
