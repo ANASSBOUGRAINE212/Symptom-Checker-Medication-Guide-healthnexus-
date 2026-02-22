@@ -327,7 +327,7 @@ docker-compose exec backend sh
 npx prisma migrate dev
 
 # Create test database
-docker-compose exec mysql mysql -u root -pWJ28@krhps -e "CREATE DATABASE IF NOT EXISTS healthnexus_test;"
+docker-compose exec mysql mysql -u root -p<YOUR_PASSWORD> -e "CREATE DATABASE IF NOT EXISTS healthnexus_test;"
 
 # Exit container
 exit

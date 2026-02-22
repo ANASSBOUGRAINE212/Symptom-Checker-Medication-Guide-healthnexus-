@@ -29,7 +29,10 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+.env.docker.local
+docker-compose.override.yml
 
 # Keep example files
 !.env.example
 !.env.production
+!.env.docker

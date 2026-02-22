@@ -6,27 +6,27 @@ services:
     image: mysql:8.0
     container_name: healthnexus-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: WJ28@krhps
-      MYSQL_DATABASE: healthnexus_db
-      MYSQL_TEST_DATABASE: healthnexus_test
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_TEST_DATABASE: ${MYSQL_TEST_DATABASE}
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pWJ28@krhps"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - healthnexus-network
 
-  # MongoDB Database 
+  # MongoDB Database (Local - for development)
   mongodb:
     image: mongo:7.0
     container_name: healthnexus-mongodb
     environment:
-      MONGO_INITDB_DATABASE: healthnexus
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     ports:
       - "27017:27017"
     volumes:
@@ -48,40 +48,40 @@ services:
     ports:
       - "5174:5174"
     environment:
-      # Database URLs 
-      DATABASE_URL: mysql://root:WJ28@krhps@mysql:3306/healthnexus_db
-      DATABASE_TEST_URL: mysql://root:WJ28@krhps@mysql:3306/healthnexus_test
+      # Database URLs
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_TEST_URL: ${DATABASE_TEST_URL}
       
-      # MongoDB 
-      MONGODB_URI: mongodb://mongodb:27017/healthnexus
-      MONGODB_TEST_URI: mongodb://mongodb:27017/healthnexus_test
+      # MongoDB
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_TEST_URI: ${MONGODB_TEST_URI}
       
       # Admin Configuration
-      ADMIN_EMAIL: anassbougraine644@gmail.com
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
       
       # JWT Secrets
-      JWT_ACCESS_SECRET: your-super-secure-access-token-secret-change-in-production-2024
-      JWT_REFRESH_SECRET: your-super-secure-refresh-token-secret-change-in-production-2024
-      JWT_EXPIRY: 86400000
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_EXPIRY: ${JWT_EXPIRY}
       
       # App Configuration
       NODE_ENV: development
       PORT: 5174
       
       # Security
-      COOKIE_SECRET: a09d3144e9404b9ea629762fb123e8beda4788e4d655c8feabf157a53b407bd6
-      CORS_ORIGIN: http://localhost:5173,http://localhost:5174
-      SESSION_EXPIRY: 86400000
-      ENCRYPTION_SECRET: your-super-secure-encryption-key-change-in-production-2024
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      SESSION_EXPIRY: ${SESSION_EXPIRY}
+      ENCRYPTION_SECRET: ${ENCRYPTION_SECRET}
       
       # Logging
-      LOG_LEVEL: warn
+      LOG_LEVEL: ${LOG_LEVEL}
       
       # Email Configuration
-      SMTP_HOST: smtp.gmail.com
-      SMTP_PORT: 587
-      SMTP_USER: anassbougraine644@gmail.com
-      SMTP_PASS: snmfnzdtbmwnhihk
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
       
     depends_on:
       mysql:
@@ -104,8 +104,8 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_API_URL: http://localhost:5174/api
-      VITE_ADMIN_EMAIL: anassbougraine644@gmail.com
+      VITE_API_URL: ${VITE_API_URL}
+      VITE_ADMIN_EMAIL: ${VITE_ADMIN_EMAIL}
     depends_on:
       - backend
     volumes:
@@ -115,7 +115,7 @@ services:
       - healthnexus-network
     restart: unless-stopped
 
-# volumes
+# Named volumes for data persistence
 volumes:
   mysql_data:
     driver: local
