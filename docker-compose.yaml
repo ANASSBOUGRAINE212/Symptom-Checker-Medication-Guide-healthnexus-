@@ -1,7 +1,5 @@
 version: '3.8'
 
-# Load environment variables from .env.docker.local
-# This file is NOT committed to Git and contains your actual credentials
 env_file:
   - .env.docker.local
 
@@ -26,7 +24,7 @@ services:
     networks:
       - healthnexus-network
 
-  # MongoDB Database (Local - for development)
+  # MongoDB Database 
   mongodb:
     image: mongo:7.0
     container_name: healthnexus-mongodb
