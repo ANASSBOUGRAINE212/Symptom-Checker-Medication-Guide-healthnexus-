@@ -123,6 +123,8 @@ healthnexus/
 ├── start.sh                  # Unix/Mac startup script
 └── README.md
 ```
+### References & Inspiration
+- Project structure inspo: [YouTube Tutorial](https://www.youtube.com/watch?v=4sbklcQ0EXc)
 
 ---
 
@@ -310,6 +312,10 @@ exit
 ---
 
 ## 🧪 Testing
+
+#### Testing References
+- Jest (backend unit tests): [Official Tutorial](https://jestjs.io/docs/tutorial-react)
+- Vitest (frontend unit tests): [Official Guide](https://vitest.dev/guide/projects.html)
 
 ### Backend Tests (Jest)
 
@@ -609,6 +615,12 @@ DELETE /api/medications/:id           - Delete medication (admin)
 ---
 
 ## 🔒 Security Features
+
+### Security References
+- Password hashing with bcrypt: [Wanago.io Guide](https://wanago.io/2018/12/24/typescript-express-registering-authenticating-jwt/)
+- Secure JWT with refresh tokens: [Medium Article](https://medium.com/@gigi.shalamberidze2022/implementing-secure-authentication-authorization-in-express-js-with-jwt-typescript-and-prisma-087c90596889)
+- Helmet security headers: [One Uptime Guide](https://oneuptime.com/blog/post/2026-01-25-helmet-security-expressjs/view?.com#testing-your-headers)
+- XSS Protection: [express-xss-sanitizer](https://www.npmjs.com/package/express-xss-sanitizer)
 
 ### Authentication & Authorization
 - JWT-based authentication with access and refresh tokens
