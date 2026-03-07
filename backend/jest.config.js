@@ -27,5 +27,5 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
   testTimeout: 30000,
   verbose: true,
-  maxWorkers: 1, // Run tests sequentially to avoid race conditions
+  maxWorkers: 1, 
 };
