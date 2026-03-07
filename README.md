@@ -124,7 +124,7 @@ healthnexus/
 └── README.md
 ```
 ### References & Inspiration
-- Project structure inspo: [YouTube Tutorial](https://www.youtube.com/watch?v=4sbklcQ0EXc)
+- Project structure inspo: [YouTube](https://www.youtube.com/watch?v=4sbklcQ0EXc)
 
 ---
 
@@ -314,8 +314,8 @@ exit
 ## 🧪 Testing
 
 #### Testing References
-- Jest (backend unit tests): [Official Tutorial](https://jestjs.io/docs/tutorial-react)
-- Vitest (frontend unit tests): [Official Guide](https://vitest.dev/guide/projects.html)
+- Jest (backend unit tests): [Tutorial](https://jestjs.io/docs/tutorial-react)
+- Vitest (frontend unit tests): [Guide](https://vitest.dev/guide/projects.html)
 
 ### Backend Tests (Jest)
 
