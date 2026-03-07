@@ -1,4 +1,4 @@
-# HealthNexus - Medical Symptom Checker & Doctor Appointment System
+# HealthNexus - A Medical Symptom Checker & Doctor Appointment System
 
 A comprehensive healthcare platform that combines AI-powered symptom checking, medication information, and doctor appointment management. Built with modern web technologies for a seamless user experience.
 
@@ -9,8 +9,6 @@ A comprehensive healthcare platform that combines AI-powered symptom checking, m
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
 - [Docker Setup](#docker-setup)
@@ -128,48 +126,11 @@ healthnexus/
 
 ---
 
-## 📦 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** (v18 or higher)
-- **npm** or **yarn**
-- **MySQL** (v8 or higher)
-- **MongoDB** (local or Atlas)
-- **Git**
-
----
-
-## 🚀 Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url>
-cd healthnexus
-```
-
-### 2. Install Backend Dependencies
-
-```bash
-cd backend
-npm install
-```
-
-### 3. Install Frontend Dependencies
-
-```bash
-cd ../frontend
-npm install
-```
-
----
-
 ## ⚙️ Configuration
 
 ### Backend Configuration
 
-Create a `.env` file in the `backend` directory:
+a `.env` file in the `backend` directory:
 
 ```env
 # Database - MySQL
@@ -188,8 +149,8 @@ MONGODB_TEST_URI="mongodb+srv://username:password@cluster.mongodb.net/healthnexu
 ADMIN_EMAIL="admin@example.com"
 
 # JWT Authentication
-JWT_ACCESS_SECRET="your-super-secure-access-token-secret-change-in-production"
-JWT_REFRESH_SECRET="your-super-secure-refresh-token-secret-change-in-production"
+JWT_ACCESS_SECRET="super-secure-access-token-secret-change-in-production"
+JWT_REFRESH_SECRET="super-secure-refresh-token-secret-change-in-production"
 JWT_EXPIRY=86400000
 
 # App Configuration
@@ -197,7 +158,7 @@ NODE_ENV=development
 PORT=5174
 
 # Security Configuration
-COOKIE_SECRET="your-cookie-secret-key"
+COOKIE_SECRET="cookie-secret-key"
 CORS_ORIGIN="http://localhost:5173,http://localhost:5174"
 SESSION_EXPIRY=86400000
 
@@ -205,18 +166,18 @@ SESSION_EXPIRY=86400000
 LOG_LEVEL=warn
 
 # Field-Level Encryption
-ENCRYPTION_SECRET="your-encryption-key-change-in-production"
+ENCRYPTION_SECRET="encryption-key-change-in-production"
 
 # Email Configuration (for OTP verification)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-app-password
+SMTP_USER=email@gmail.com
+SMTP_PASS=app-password
 ```
 
 ### Frontend Configuration
 
-Create a `.env` file in the `frontend` directory:
+a `.env` file in the `frontend` directory:
 
 ```env
 VITE_API_URL=http://localhost:5174/api
@@ -225,13 +186,13 @@ VITE_ADMIN_EMAIL=admin@example.com
 
 ### Database Setup
 
-1. **Create MySQL Databases**:
+1. **MySQL Databases**:
 ```sql
 CREATE DATABASE healthnexus_db;
 CREATE DATABASE healthnexus_test;
 ```
 
-2. **Run Prisma Migrations**:
+2. **Prisma Migrations**:
 ```bash
 cd backend
 npx prisma migrate dev
@@ -239,7 +200,7 @@ npx prisma generate
 ```
 
 3. **MongoDB Setup**:
-   - Create a MongoDB database (local or Atlas)
+   - a MongoDB database (local or Atlas)
    - Import disease and medication data if available
 
 ---
@@ -247,11 +208,6 @@ npx prisma generate
 ##  Running the Application
 
 ### Option 1: Using Startup Scripts
-
-**Windows:**
-```bash
-start.bat
-```
 
 **Mac/Linux:**
 ```bash
@@ -712,14 +668,7 @@ After running migrations, create an admin account:
 - Screen reader support
 - High contrast mode compatible
 
----
 
-## 📚 Additional Resources
-
-### Documentation Files
-- `docs/disease-categories.md` - Disease categorization
-- `docs/diseases-list.md` - Disease database structure
-- `docs/database schema.png` - Visual database schema
 
 ---
 
@@ -748,5 +697,4 @@ Background images used in the application are from Unsplash:
 - **Medication Image**: [White blue and orange medication pill](https://unsplash.com/fr/photos/pilule-de-medicament-blanc-bleu-et-orange-KltoLK6Mk-g) by Unsplash
 
 All images are used under the [Unsplash License](https://unsplash.com/license).
-
 
